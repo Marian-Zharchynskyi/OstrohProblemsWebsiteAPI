@@ -24,7 +24,7 @@ public static class ConfigurePersistence
                 .ConfigureWarnings(w => w.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning)));
 
         services.AddScoped<ApplicationDbContextInitialiser>();
-        services.AddRepositories();
+        // services.AddRepositories();
         // services.AddJwtTokenAuth(builder);
         // services.AddSwaggerAuth();
     }
@@ -34,7 +34,6 @@ public static class ConfigurePersistence
         /*services.AddScoped<ProductRepository>();
         services.AddScoped<IProductRepository>(provider => provider.GetRequiredService<ProductRepository>());
         services.AddScoped<IProductQueries>(provider => provider.GetRequiredService<ProductRepository>());*/
-        
     }
 
     /*private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)

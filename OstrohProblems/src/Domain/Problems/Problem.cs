@@ -11,28 +11,26 @@ public class Problem
     public string Title { get; private set; }
     public string Description { get; private set; }
     public LocationId LocationId { get; private set; }
-    public Location? Location { get; private set; }
+    public Location? Location { get;  set; }
     public ProblemStatusId ProblemStatusId { get; private set; }
-    public ProblemStatus? ProblemStatus { get; private set; }
+    public ProblemStatus? ProblemStatus { get; set; }
     public List<Comment> Comments { get; private set; } = new();
-    public List<ProblemCategory> Categories { get; private set; } = new();  
+    public List<ProblemCategory> Categories { get; private set; } = new();
 
     private Problem(ProblemId id, string title, string description, LocationId locationId,
-        Location? location, ProblemStatusId problemStatusId, ProblemStatus? problemStatus)
+        ProblemStatusId problemStatusId)
     {
         Id = id;
         Title = title;
         Description = description;
         LocationId = locationId;
-        Location = location;
         ProblemStatusId = problemStatusId;
-        ProblemStatus = problemStatus;
     }
 
     public static Problem New(ProblemId id, string title, string description, LocationId locationId,
-        Location? location, ProblemStatusId problemStatusId, ProblemStatus? problemStatus)
+        ProblemStatusId problemStatusId)
     {
-        return new Problem(id, title, description, locationId, location, problemStatusId, problemStatus);
+        return new Problem(id, title, description, locationId, problemStatusId);
     }
 
     public void AddComment(Comment comment)
