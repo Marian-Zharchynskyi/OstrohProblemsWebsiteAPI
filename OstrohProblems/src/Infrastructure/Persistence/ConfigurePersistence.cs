@@ -1,3 +1,7 @@
+using Application.Common.Interfaces.Queries;
+using Application.Common.Interfaces.Repositories;
+using Domain.ProblemStatuses;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -24,16 +28,16 @@ public static class ConfigurePersistence
                 .ConfigureWarnings(w => w.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning)));
 
         services.AddScoped<ApplicationDbContextInitialiser>();
-        // services.AddRepositories();
+        services.AddRepositories();
         // services.AddJwtTokenAuth(builder);
         // services.AddSwaggerAuth();
     }
 
     private static void AddRepositories(this IServiceCollection services)
     {
-        /*services.AddScoped<ProductRepository>();
-        services.AddScoped<IProductRepository>(provider => provider.GetRequiredService<ProductRepository>());
-        services.AddScoped<IProductQueries>(provider => provider.GetRequiredService<ProductRepository>());*/
+        services.AddScoped<ProblemStatus>();
+        services.AddScoped<IProblemStatusRepository>(provider => provider.GetRequiredService<ProblemStatusRepository>());
+        services.AddScoped<IProblemStatusQueries>(provider => provider.GetRequiredService<ProblemStatusRepository>());
     }
 
     /*private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)
