@@ -1,4 +1,5 @@
 using Application.Common;
+using Application.Common.Interfaces.Repositories;
 using Application.ProblemStatuses.Exceptions;
 using Domain.ProblemStatuses;
 using MediatR;
@@ -11,62 +12,37 @@ public record UpdateProblemStatusCommand : IRequest<Result<ProblemStatus, Proble
     public required string Name { get; init; }
 }
 
-public class UpdateManufacturerCommandHandler(
-    IManufacturerRepository manufacturerRepository,
-    ICategoryQueries categoryQueries)
-    : IRequestHandler<UpdateProblemStatusCommand, Result<Manufacturer, ProblemStatusException>>
+public class UpdateProblemStatusCommandHandler(
+    IProblemStatusRepository problemStatusRepository)
+    : IRequestHandler<UpdateProblemStatusCommand, Result<ProblemStatus, ProblemStatusException>>
 {
-    public async Task<Result<Manufacturer, ProblemStatusException>> Handle(
+    public async Task<Result<ProblemStatus, ProblemStatusException>> Handle(
         UpdateProblemStatusCommand request,
         CancellationToken cancellationToken)
     {
-        var manufacturerId = new ManufacturerId(request.ManufacturerId);
-        var existingManufacturer = await manufacturerRepository.GetById(manufacturerId, cancellationToken);
+        var problemStatusId = new ProblemStatusId(request.ProblemStatusId);
+        var existingProblemStatus = await problemStatusRepository.GetById(problemStatusId, cancellationToken);
 
-        var categoryList = new List<Category>();
-        foreach (var categoryId in request.Categories)
-        {
-            var existingCategory = await categoryQueries.GetById(new CategoryId(categoryId), cancellationToken, false);
-
-            var categoryResult = await existingCategory.Match<Task<Result<Category, ProblemStatusException>>>(
-                async c =>
-                {
-                    categoryList.Add(c);
-                    return c;
-                },
-                () => Task.FromResult<Result<Category, ProblemStatusException>>(
-                    new CategoryNotFoundException(new CategoryId(categoryId)))
-            );
-
-            if (categoryResult.IsError)
-            {
-                return new ProblemStatusUnknownException(ManufacturerId.Empty, new Exception("Error with update manufacturer"));;
-            }
-        }
-
-        return await existingManufacturer.Match<Task<Result<Manufacturer, ProblemStatusException>>>(
-            async manufacturer => await UpdateManufacturer(manufacturer, request.Name, categoryList, cancellationToken),
-            () => Task.FromResult<Result<Manufacturer, ProblemStatusException>>(
-                new ProblemStatusNotFoundException(manufacturerId))
+        return await existingProblemStatus.Match<Task<Result<ProblemStatus, ProblemStatusException>>>(
+            async problemStatus => await UpdateProblemStatus(problemStatus, request.Name, cancellationToken),
+            () => Task.FromResult<Result<ProblemStatus, ProblemStatusException>>(
+                new ProblemStatusNotFoundException(problemStatusId))
         );
     }
 
-    private async Task<Result<Manufacturer, ProblemStatusException>> UpdateManufacturer(
-        Manufacturer manufacturer,
+    private async Task<Result<ProblemStatus, ProblemStatusException>> UpdateProblemStatus(
+        ProblemStatus problemStatus,
         string name,
-        List<Category> categories,
         CancellationToken cancellationToken)
     {
         try
         {
-            manufacturer.UpdateName(name);
-            manufacturer.SetCategories(categories);
-
-            return await manufacturerRepository.Update(manufacturer, cancellationToken);
+            problemStatus.UpdateName(name);
+            return await problemStatusRepository.Update(problemStatus, cancellationToken);
         }
         catch (Exception exception)
         {
-            return new ProblemStatusUnknownException(manufacturer.Id, exception);
+            return new ProblemStatusUnknownException(problemStatus.Id, exception);
         }
     }
 }

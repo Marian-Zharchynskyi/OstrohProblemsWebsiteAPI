@@ -1,10 +1,12 @@
-using API;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Api.Modules;
+using Application;
 using Infrastructure.Persistence;
+using DbModule = API.DbModule;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// Налаштування JWT аутентифікації
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -37,9 +38,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddInfrastructure(builder);
-// builder.Services.AddApplication();
-// builder.Services.SetupServices();
-
+builder.Services.AddApplication();
+SetupModule.SetupServices(builder.Services);//чогось не хоче через builder
+    
 var app = builder.Build();
 
 // Налаштування для Swagger та розробки
@@ -59,7 +60,7 @@ app.UseCors(options => options
     .AllowCredentials()
 );
 
-await app.InitialiseDb();  
+await DbModule.InitialiseDb(app);  
 app.MapControllers();
 
 app.UseHttpsRedirection();
