@@ -7,7 +7,7 @@ public interface IProblemStatusRepository
 {
     Task<Option<ProblemStatus>> GetById(ProblemStatusId id, CancellationToken cancellationToken);
     Task<Option<ProblemStatus>> SearchByName(string name, CancellationToken cancellationToken);
-    Task<ProblemStatus> Add(ProblemStatus manufacturer, CancellationToken cancellationToken);
-    Task<ProblemStatus> Update(ProblemStatus manufacturer, CancellationToken cancellationToken);
-    Task<ProblemStatus> Delete(ProblemStatus manufacturer, CancellationToken cancellationToken);
+    Task<ProblemStatus> Add(ProblemStatus problemStatus, CancellationToken cancellationToken);
+    Task<ProblemStatus> Update(ProblemStatus problemStatus, CancellationToken cancellationToken);
+    Task<ProblemStatus> Delete(ProblemStatus problemStatus, CancellationToken cancellationToken);
 }

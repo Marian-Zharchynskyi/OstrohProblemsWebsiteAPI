@@ -16,7 +16,6 @@ public class ProblemStatusesController(
     IProblemStatusQueries problemStatusQueries) 
     : ControllerBase
 {
-    [AllowAnonymous]
     [HttpGet("get-all")]
     public async Task<ActionResult<IReadOnlyList<ProblemStatusDto>>> GetAll(CancellationToken cancellationToken)
     {
@@ -24,7 +23,6 @@ public class ProblemStatusesController(
         return entities.Select(ProblemStatusDto.FromDomainModel).ToList();
     }
 
-    [AllowAnonymous]
     [HttpGet("get-by-id/{problemStatusId:guid}")]
     public async Task<ActionResult<ProblemStatusDto>> Get([FromRoute] Guid problemStatusId,
         CancellationToken cancellationToken)

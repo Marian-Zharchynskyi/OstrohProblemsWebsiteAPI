@@ -1,12 +1,9 @@
-using Domain.Problems;
-
 namespace Domain.ProblemCategories;
 
 public class ProblemCategory
 {
     public ProblemCategoryId Id { get; }
     public string Name { get; private set; }
-    public List<Problem> Problems { get; private set; } = new();
 
     private ProblemCategory(ProblemCategoryId id, string name)
     {

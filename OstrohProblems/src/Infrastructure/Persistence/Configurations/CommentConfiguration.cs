@@ -14,10 +14,6 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
         builder.Property(c => c.Id)
             .HasConversion(id => id.Value,value => new CommentId(value))
             .IsRequired();
-        
-        builder.Property(p => p.ProblemId)
-            .HasConversion(id => id.Value, value => new ProblemId(value))
-            .IsRequired();
 
         builder.Property(c => c.Content)
             .IsRequired()
@@ -25,10 +21,5 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
 
         builder.Property(c => c.CreatedAt)
             .IsRequired();
-
-        builder.HasOne(c => c.Problem)
-            .WithMany(p => p.Comments)
-            .HasForeignKey(c => c.ProblemId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

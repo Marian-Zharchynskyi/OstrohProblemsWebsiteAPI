@@ -16,28 +16,13 @@ public class ProblemConfiguration : IEntityTypeConfiguration<Problem>
         builder.Property(p => p.Title)
             .IsRequired()
             .HasMaxLength(100);
-
-        builder.Property(p => p.Description)
+        
+        builder.Property(p => p.Longitude)
             .IsRequired()
-            .HasMaxLength(500);
-
-        builder.HasOne(p => p.Location)
-            .WithMany()
-            .HasForeignKey(p => p.LocationId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(p => p.ProblemStatus)
-            .WithMany()
-            .HasForeignKey(p => p.ProblemStatusId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasMany(p => p.Comments)
-            .WithOne(c => c.Problem)
-            .HasForeignKey(c => c.ProblemId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(p => p.Categories)
-            .WithMany(c => c.Problems)
-            .UsingEntity(j => j.ToTable("fk_problem_categories"));
+            .HasMaxLength(50);
+        
+        builder.Property(p => p.Latitude)
+            .IsRequired()
+            .HasMaxLength(50);
     }
 }

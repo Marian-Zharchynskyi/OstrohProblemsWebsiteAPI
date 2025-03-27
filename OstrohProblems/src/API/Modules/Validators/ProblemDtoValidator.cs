@@ -1,0 +1,26 @@
+using Api.Dtos;
+using FluentValidation;
+
+namespace Api.Modules.Validators;
+
+public class ProblemDtoValidator : AbstractValidator<ProblemDto>
+{
+    public ProblemDtoValidator()
+    {
+        RuleFor(x => x.Title)
+            .NotEmpty()
+            .MaximumLength(255)
+            .MinimumLength(3)
+            .WithMessage("Title must be between 3 and 255 characters.");
+        
+        RuleFor(x => x.Latitude)
+            .NotEmpty()
+            .InclusiveBetween(-90, 90)
+            .WithMessage("Latitude must be between -90 and 90 degrees.");
+        
+        RuleFor(x => x.Longitude)
+            .NotEmpty()
+            .InclusiveBetween(-180, 180)
+            .WithMessage("Longitude must be between -180 and 180 degrees.");
+    }
+}

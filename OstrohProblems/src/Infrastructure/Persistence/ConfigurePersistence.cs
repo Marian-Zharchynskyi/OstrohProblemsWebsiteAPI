@@ -1,6 +1,5 @@
 using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
-using Domain.ProblemStatuses;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +14,7 @@ public static class ConfigurePersistence
 {
     public static void AddPersistence(this IServiceCollection services, WebApplicationBuilder builder)
     {
-        var dataSourceBuild = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("Default"));
+        var dataSourceBuild = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("DefaultConnection"));
         dataSourceBuild.EnableDynamicJson();
         var dataSource = dataSourceBuild.Build();
 
@@ -35,7 +34,7 @@ public static class ConfigurePersistence
 
     private static void AddRepositories(this IServiceCollection services)
     {
-        services.AddScoped<ProblemStatus>();
+        services.AddScoped<ProblemStatusRepository>();
         services.AddScoped<IProblemStatusRepository>(provider => provider.GetRequiredService<ProblemStatusRepository>());
         services.AddScoped<IProblemStatusQueries>(provider => provider.GetRequiredService<ProblemStatusRepository>());
     }
