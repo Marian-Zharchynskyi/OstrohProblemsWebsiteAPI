@@ -37,6 +37,10 @@ public static class ConfigurePersistence
         services.AddScoped<ProblemStatusRepository>();
         services.AddScoped<IProblemStatusRepository>(provider => provider.GetRequiredService<ProblemStatusRepository>());
         services.AddScoped<IProblemStatusQueries>(provider => provider.GetRequiredService<ProblemStatusRepository>());
+        
+        services.AddScoped<ProblemRepository>();
+        services.AddScoped<IProblemRepository>(provider => provider.GetRequiredService<ProblemRepository>());
+        services.AddScoped<IProblemQueries>(provider => provider.GetRequiredService<ProblemRepository>());
     }
 
     /*private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)

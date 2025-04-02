@@ -51,7 +51,7 @@ if (app.Environment.IsDevelopment())
 // app.UseAuthorization();
 
 app.UseCors(options => options
-    .WithOrigins(new[] { "http://localhost:5146" })
+    .WithOrigins("http://localhost:5173")
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()

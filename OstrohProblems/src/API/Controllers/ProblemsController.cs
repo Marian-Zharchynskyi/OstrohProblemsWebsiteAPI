@@ -4,7 +4,6 @@ using Application.Common.Interfaces.Queries;
 using Application.Problems.Commands;
 using Domain.Problems;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -16,7 +15,6 @@ public class ProblemsController(
     IProblemQueries problemQueries) 
     : ControllerBase
 {
-    [AllowAnonymous]
     [HttpGet("get-all")]
     public async Task<ActionResult<IReadOnlyList<ProblemDto>>> GetAll(CancellationToken cancellationToken)
     {
@@ -24,7 +22,6 @@ public class ProblemsController(
         return entities.Select(ProblemDto.FromDomainModel).ToList();
     }
 
-    [AllowAnonymous]
     [HttpGet("get-by-id/{problemId:guid}")]
     public async Task<ActionResult<ProblemDto>> Get([FromRoute] Guid problemId,
         CancellationToken cancellationToken)
