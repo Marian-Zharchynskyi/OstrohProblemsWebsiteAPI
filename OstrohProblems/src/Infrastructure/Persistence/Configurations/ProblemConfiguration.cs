@@ -1,4 +1,5 @@
 ﻿using Domain.Problems;
+using Domain.ProblemStatuses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -24,5 +25,27 @@ public class ProblemConfiguration : IEntityTypeConfiguration<Problem>
         builder.Property(p => p.Latitude)
             .IsRequired()
             .HasMaxLength(50);
+
+        builder.Property(p => p.Description)
+            .IsRequired()
+            .HasMaxLength(500);
+        
+        builder.Property(p => p.ProblemStatusId)
+            .HasConversion(id => id.Value, value => new ProblemStatusId(value))
+            .IsRequired();
+        
+        builder.HasOne(ps => ps.ProblemStatus)
+            .WithMany(pr => pr.Problems)
+            .HasForeignKey(p => p.ProblemStatusId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(p => p.Comments)
+            .WithOne(c => c.Problem)
+            .HasForeignKey(c => c.ProblemId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.Categories)
+            .WithMany(c => c.Problems)
+            .UsingEntity(j => j.ToTable("fk_problem_categories"));
     }
 }

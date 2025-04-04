@@ -38,8 +38,15 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<Guid>("ProblemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("problem_id");
+
                     b.HasKey("Id")
                         .HasName("pk_comments");
+
+                    b.HasIndex("ProblemId")
+                        .HasDatabaseName("ix_comments_problem_id");
 
                     b.ToTable("comments", (string)null);
                 });
@@ -86,6 +93,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
                     b.Property<double>("Latitude")
                         .HasMaxLength(50)
                         .HasColumnType("double precision")
@@ -96,6 +109,10 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("double precision")
                         .HasColumnName("longitude");
 
+                    b.Property<Guid>("ProblemStatusId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("problem_status_id");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -105,7 +122,80 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_problems");
 
+                    b.HasIndex("ProblemStatusId")
+                        .HasDatabaseName("ix_problems_problem_status_id");
+
                     b.ToTable("problems", (string)null);
+                });
+
+            modelBuilder.Entity("ProblemProblemCategory", b =>
+                {
+                    b.Property<Guid>("CategoriesId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("categories_id");
+
+                    b.Property<Guid>("ProblemsId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("problems_id");
+
+                    b.HasKey("CategoriesId", "ProblemsId")
+                        .HasName("pk_fk_problem_categories");
+
+                    b.HasIndex("ProblemsId")
+                        .HasDatabaseName("ix_fk_problem_categories_problems_id");
+
+                    b.ToTable("fk_problem_categories", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Comments.Comment", b =>
+                {
+                    b.HasOne("Domain.Problems.Problem", "Problem")
+                        .WithMany("Comments")
+                        .HasForeignKey("ProblemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_comments_problems_problem_id");
+
+                    b.Navigation("Problem");
+                });
+
+            modelBuilder.Entity("Domain.Problems.Problem", b =>
+                {
+                    b.HasOne("Domain.ProblemStatuses.ProblemStatus", "ProblemStatus")
+                        .WithMany("Problems")
+                        .HasForeignKey("ProblemStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_problems_problem_statuses_problem_status_id");
+
+                    b.Navigation("ProblemStatus");
+                });
+
+            modelBuilder.Entity("ProblemProblemCategory", b =>
+                {
+                    b.HasOne("Domain.ProblemCategories.ProblemCategory", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_fk_problem_categories_problem_categories_categories_id");
+
+                    b.HasOne("Domain.Problems.Problem", null)
+                        .WithMany()
+                        .HasForeignKey("ProblemsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_fk_problem_categories_problems_problems_id");
+                });
+
+            modelBuilder.Entity("Domain.ProblemStatuses.ProblemStatus", b =>
+                {
+                    b.Navigation("Problems");
+                });
+
+            modelBuilder.Entity("Domain.Problems.Problem", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

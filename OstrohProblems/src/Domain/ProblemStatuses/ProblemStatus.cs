@@ -1,9 +1,12 @@
+using Domain.Problems;
+
 namespace Domain.ProblemStatuses;
 
 public class ProblemStatus
 {
     public ProblemStatusId Id { get; }
     public string Name { get; private set; }
+    public List<Problem> Problems { get; private set; } = new();
 
     private ProblemStatus(ProblemStatusId id, string name)
     {

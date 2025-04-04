@@ -2,6 +2,7 @@
 using Application.Common.Interfaces.Repositories;
 using Application.Problems.Exceptions;
 using Domain.Problems;
+using Domain.ProblemStatuses;
 using MediatR;
 
 namespace Application.Problems.Commands;
@@ -36,7 +37,7 @@ public class CreateProblemCommandHandler(
     {
         try
         {
-            var entity = Problem.New(ProblemId.New(), title, latitude, longitude);
+            var entity = Problem.New(ProblemId.New(), title, latitude, longitude,"", ProblemStatusId.New());
 
             return await problemRepository.Add(entity, cancellationToken);
         }

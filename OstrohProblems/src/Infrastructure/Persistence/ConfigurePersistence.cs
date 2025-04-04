@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
+using Domain.ProblemCategories;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,10 @@ public static class ConfigurePersistence
         services.AddScoped<ProblemRepository>();
         services.AddScoped<IProblemRepository>(provider => provider.GetRequiredService<ProblemRepository>());
         services.AddScoped<IProblemQueries>(provider => provider.GetRequiredService<ProblemRepository>());
+        
+        services.AddScoped<ProblemCategoryRepository>();
+        services.AddScoped<IProblemCategoryRepository>(provider => provider.GetRequiredService<ProblemCategoryRepository>());
+        services.AddScoped<IProblemCategoryQueries>(provider => provider.GetRequiredService<ProblemCategoryRepository>());
     }
 
     /*private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)

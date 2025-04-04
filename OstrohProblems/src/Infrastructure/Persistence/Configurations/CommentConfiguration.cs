@@ -15,11 +15,20 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
             .HasConversion(id => id.Value,value => new CommentId(value))
             .IsRequired();
 
+        builder.Property(p => p.ProblemId)
+            .HasConversion(id => id.Value, value => new ProblemId(value))
+            .IsRequired();
+
         builder.Property(c => c.Content)
             .IsRequired()
             .HasMaxLength(500);
 
         builder.Property(c => c.CreatedAt)
             .IsRequired();
+
+        builder.HasOne(c => c.Problem)
+            .WithMany(p => p.Comments)
+            .HasForeignKey(c => c.ProblemId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
