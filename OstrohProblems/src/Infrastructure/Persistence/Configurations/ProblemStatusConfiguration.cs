@@ -18,7 +18,7 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.Property(ps => ps.Name)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasColumnType("varchar(100)");
         }
     }
 }

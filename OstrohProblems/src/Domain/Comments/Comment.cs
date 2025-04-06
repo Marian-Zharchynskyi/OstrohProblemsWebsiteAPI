@@ -7,8 +7,9 @@ public class Comment
     public CommentId Id { get; }
     public string Content { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public ProblemId ProblemId { get; private set; }  
-    public Problem? Problem { get; set; }  
+    public ProblemId ProblemId { get; private set; }
+    public Problem? Problem { get; set; }
+    public DateTime UpdatedAt { get; private set; }
 
     private Comment(CommentId id, string content, DateTime createdAt, ProblemId problemId)
     {
@@ -26,5 +27,6 @@ public class Comment
     public void UpdateContent(string content)
     {
         Content = content;
+        UpdatedAt = DateTime.UtcNow;
     }
 }

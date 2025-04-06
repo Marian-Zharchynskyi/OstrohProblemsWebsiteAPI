@@ -1,5 +1,6 @@
 using Domain.Comments;
 using Domain.Problems;
+using Infrastructure.Persistence.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,19 +13,20 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.Id)
-            .HasConversion(id => id.Value,value => new CommentId(value))
-            .IsRequired();
-
-        builder.Property(p => p.ProblemId)
-            .HasConversion(id => id.Value, value => new ProblemId(value))
+            .HasConversion(id => id.Value, value => new CommentId(value))
             .IsRequired();
 
         builder.Property(c => c.Content)
             .IsRequired()
-            .HasMaxLength(500);
+            .HasColumnType("varchar(300)");
 
         builder.Property(c => c.CreatedAt)
-            .IsRequired();
+            .HasConversion(new DateTimeUtcConverter())
+            .HasDefaultValueSql("timezone('utc', now())");
+
+        builder.Property(c => c.UpdatedAt)
+            .HasConversion(new DateTimeUtcConverter())
+            .HasDefaultValueSql("timezone('utc', now())");
 
         builder.HasOne(c => c.Problem)
             .WithMany(p => p.Comments)

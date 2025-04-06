@@ -16,23 +16,19 @@ public class ProblemConfiguration : IEntityTypeConfiguration<Problem>
 
         builder.Property(p => p.Title)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasColumnType("varchar(100)");
         
         builder.Property(p => p.Longitude)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasColumnType("varchar(50)");
         
         builder.Property(p => p.Latitude)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasColumnType("varchar(50)");
 
         builder.Property(p => p.Description)
             .IsRequired()
-            .HasMaxLength(500);
-        
-        builder.Property(p => p.ProblemStatusId)
-            .HasConversion(id => id.Value, value => new ProblemStatusId(value))
-            .IsRequired();
+            .HasColumnType("varchar(300)");
         
         builder.HasOne(ps => ps.ProblemStatus)
             .WithMany(pr => pr.Problems)

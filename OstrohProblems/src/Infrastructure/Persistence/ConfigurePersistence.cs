@@ -15,7 +15,8 @@ public static class ConfigurePersistence
 {
     public static void AddPersistence(this IServiceCollection services, WebApplicationBuilder builder)
     {
-        var dataSourceBuild = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("DefaultConnection"));
+        var dataSourceBuild =
+            new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("DefaultConnection"));
         dataSourceBuild.EnableDynamicJson();
         var dataSource = dataSourceBuild.Build();
 
@@ -36,16 +37,23 @@ public static class ConfigurePersistence
     private static void AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<ProblemStatusRepository>();
-        services.AddScoped<IProblemStatusRepository>(provider => provider.GetRequiredService<ProblemStatusRepository>());
+        services.AddScoped<IProblemStatusRepository>(provider =>
+            provider.GetRequiredService<ProblemStatusRepository>());
         services.AddScoped<IProblemStatusQueries>(provider => provider.GetRequiredService<ProblemStatusRepository>());
-        
+
         services.AddScoped<ProblemRepository>();
         services.AddScoped<IProblemRepository>(provider => provider.GetRequiredService<ProblemRepository>());
         services.AddScoped<IProblemQueries>(provider => provider.GetRequiredService<ProblemRepository>());
-        
+
         services.AddScoped<ProblemCategoryRepository>();
-        services.AddScoped<IProblemCategoryRepository>(provider => provider.GetRequiredService<ProblemCategoryRepository>());
-        services.AddScoped<IProblemCategoryQueries>(provider => provider.GetRequiredService<ProblemCategoryRepository>());
+        services.AddScoped<IProblemCategoryRepository>(provider =>
+            provider.GetRequiredService<ProblemCategoryRepository>());
+        services.AddScoped<IProblemCategoryQueries>(
+            provider => provider.GetRequiredService<ProblemCategoryRepository>());
+
+        services.AddScoped<CommentRepository>();
+        services.AddScoped<ICommentRepository>(provider => provider.GetRequiredService<CommentRepository>());
+        services.AddScoped<ICommentQueries>(provider => provider.GetRequiredService<CommentRepository>());
     }
 
     /*private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)
