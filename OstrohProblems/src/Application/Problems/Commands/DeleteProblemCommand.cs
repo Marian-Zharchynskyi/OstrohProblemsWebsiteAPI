@@ -8,17 +8,17 @@ using Npgsql;
 
 namespace Application.Problems.Commands;
 
-public record DeleteProblemStatusCommand : IRequest<Result<ProblemStatus, ProblemStatusException>>
+public record DeleteProblemCommand : IRequest<Result<ProblemStatus, ProblemStatusException>>
 {
     public required Guid ProblemStatusId { get; init; }
 }
 
 public class DeleteProblemStatusCommandHandler(
     IProblemStatusRepository problemStatusRepository)
-    : IRequestHandler<DeleteProblemStatusCommand, Result<ProblemStatus, ProblemStatusException>>
+    : IRequestHandler<DeleteProblemCommand, Result<ProblemStatus, ProblemStatusException>>
 {
     public async Task<Result<ProblemStatus, ProblemStatusException>> Handle(
-        DeleteProblemStatusCommand request,
+        DeleteProblemCommand request,
         CancellationToken cancellationToken)
     {
         var problemStatusId = new ProblemStatusId(request.ProblemStatusId);

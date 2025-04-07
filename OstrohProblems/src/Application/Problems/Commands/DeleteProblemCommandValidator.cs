@@ -2,9 +2,9 @@
 
 namespace Application.Problems.Commands;
 
-public class DeleteProblemStatusCommandValidator: AbstractValidator<DeleteProblemStatusCommand>
+public class DeleteProblemCommandValidator: AbstractValidator<DeleteProblemCommand>
 {
-    public DeleteProblemStatusCommandValidator()
+    public DeleteProblemCommandValidator()
     {
         RuleFor(x => x.ProblemStatusId)
             .NotEmpty()

@@ -10,7 +10,7 @@ namespace Api.Controllers;
 
 [Route("problem-categories")]
 [ApiController]
-public class ProblemCategoryController(
+public class ProblemCategoriesController(
     ISender sender,
     IProblemCategoryQueries problemCategoryQueries)
     : ControllerBase

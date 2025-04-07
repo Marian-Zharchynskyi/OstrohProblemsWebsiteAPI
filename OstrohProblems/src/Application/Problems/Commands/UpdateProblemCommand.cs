@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Problems.Commands;
 
-public record UpdateProblemStatusCommand : IRequest<Result<ProblemStatus, ProblemStatusException>>
+public record UpdateProblemCommand : IRequest<Result<ProblemStatus, ProblemStatusException>>
 {
     public required Guid ProblemStatusId { get; init; }
     public required string Name { get; init; }
@@ -14,10 +14,10 @@ public record UpdateProblemStatusCommand : IRequest<Result<ProblemStatus, Proble
 
 public class UpdateProblemStatusCommandHandler(
     IProblemStatusRepository problemStatusRepository)
-    : IRequestHandler<UpdateProblemStatusCommand, Result<ProblemStatus, ProblemStatusException>>
+    : IRequestHandler<UpdateProblemCommand, Result<ProblemStatus, ProblemStatusException>>
 {
     public async Task<Result<ProblemStatus, ProblemStatusException>> Handle(
-        UpdateProblemStatusCommand request,
+        UpdateProblemCommand request,
         CancellationToken cancellationToken)
     {
         var problemStatusId = new ProblemStatusId(request.ProblemStatusId);

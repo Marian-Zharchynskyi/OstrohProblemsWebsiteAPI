@@ -1,10 +1,10 @@
 using FluentValidation;
 
-namespace Application.ProblemStatuses.Commands;
+namespace Application.Problems.Commands;
 
-public class UpdateProblemStatusCommandValidator : AbstractValidator<UpdateProblemStatusCommand>
+public class UpdateProblemCommandValidator : AbstractValidator<UpdateProblemCommand>
 {
-    public UpdateProblemStatusCommandValidator()
+    public UpdateProblemCommandValidator()
     {
         RuleFor(x => x.ProblemStatusId)
             .NotEmpty()
