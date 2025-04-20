@@ -6,7 +6,7 @@ public class ProblemCategory
 {
     public ProblemCategoryId Id { get; }
     public string Name { get; private set; }
-    public List<Problem> Problems { get; private set; } = new();
+    public ICollection<Problem> Problems { get; private set; } = new List<Problem>();
 
     private ProblemCategory(ProblemCategoryId id, string name)
     {

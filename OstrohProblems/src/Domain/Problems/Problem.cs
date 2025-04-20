@@ -1,5 +1,6 @@
 using Domain.Comments;
 using Domain.ProblemCategories;
+using Domain.ProblemRatings;
 using Domain.ProblemStatuses;
 
 namespace Domain.Problems;
@@ -13,11 +14,14 @@ public class Problem
     public string Description { get; private set; }
     public ProblemStatusId ProblemStatusId { get; private set; }
     public ProblemStatus? ProblemStatus { get; set; }
-    public List<Comment> Comments { get; private set; } = new();
-    public List<ProblemCategory> Categories { get; private set; } = new();
+    public ICollection<Comment> Comments { get; private set; } = new List<Comment>();
+    public ICollection<ProblemCategory> Categories { get; private set; } = new List<ProblemCategory>();
+    public ICollection<ProblemRating> Ratings { get; private set; } = new List<ProblemRating>();
+    public DateTime CreatedAt { get; private set; }
+    public DateTime UpdatedAt { get; private set; }
 
     private Problem(ProblemId id, string title, double latitude, double longitude, string description,
-        ProblemStatusId problemStatusId)
+        ProblemStatusId problemStatusId, DateTime createdAt)
     {
         Id = id;
         Title = title;
@@ -25,11 +29,22 @@ public class Problem
         Longitude = longitude;
         Description = description;
         ProblemStatusId = problemStatusId;
+        CreatedAt = createdAt;
     }
 
     public static Problem New(ProblemId id, string title, double latitude, double longitude, string description,
         ProblemStatusId problemStatusId)
     {
-        return new Problem(id, title, latitude, longitude, description, problemStatusId);
+        return new Problem(id, title, latitude, longitude, description, problemStatusId, DateTime.Now);
+    }
+
+    public void UpdateProblem(string title, double latitude, double longitude, string description, ProblemStatusId problemStatusId)
+    {
+        Title = title;
+        Latitude = latitude;
+        Longitude = longitude;
+        Description = description;
+        ProblemStatusId = problemStatusId;
+        UpdatedAt = DateTime.Now;
     }
 }

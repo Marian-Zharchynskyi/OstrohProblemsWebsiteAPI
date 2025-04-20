@@ -2,12 +2,12 @@
 
 namespace Application.Problems.Commands;
 
-public class DeleteProblemCommandValidator: AbstractValidator<DeleteProblemCommand>
+public class DeleteProblemCommandValidator : AbstractValidator<DeleteProblemCommand>
 {
     public DeleteProblemCommandValidator()
     {
-        RuleFor(x => x.ProblemStatusId)
+        RuleFor(x => x.ProblemId)
             .NotEmpty()
-            .WithMessage("ProblemStatus ID is required");
+            .WithMessage("Problem Id is required.");
     }
 }

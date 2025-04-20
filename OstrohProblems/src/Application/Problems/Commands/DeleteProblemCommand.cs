@@ -1,50 +1,50 @@
 ﻿using Application.Common;
 using Application.Common.Interfaces.Repositories;
-using Application.ProblemStatuses.Exceptions;
-using Domain.ProblemStatuses;
+using Application.Problems.Exceptions;
+using Domain.Problems;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace Application.Problems.Commands;
 
-public record DeleteProblemCommand : IRequest<Result<ProblemStatus, ProblemStatusException>>
+public record DeleteProblemCommand : IRequest<Result<Problem, ProblemException>>
 {
-    public required Guid ProblemStatusId { get; init; }
+    public required Guid ProblemId { get; init; }
 }
 
-public class DeleteProblemStatusCommandHandler(
-    IProblemStatusRepository problemStatusRepository)
-    : IRequestHandler<DeleteProblemCommand, Result<ProblemStatus, ProblemStatusException>>
+public class DeleteProblemCommandHandler(
+    IProblemRepository problemRepository)
+    : IRequestHandler<DeleteProblemCommand, Result<Problem, ProblemException>>
 {
-    public async Task<Result<ProblemStatus, ProblemStatusException>> Handle(
+    public async Task<Result<Problem, ProblemException>> Handle(
         DeleteProblemCommand request,
         CancellationToken cancellationToken)
     {
-        var problemStatusId = new ProblemStatusId(request.ProblemStatusId);
-        var existingProblemStatus = await problemStatusRepository.GetById(problemStatusId, cancellationToken);
+        var problemId = new ProblemId(request.ProblemId);
+        var existingProblem = await problemRepository.GetById(problemId, cancellationToken);
 
-        return await existingProblemStatus.Match<Task<Result<ProblemStatus, ProblemStatusException>>>(
-            async problemStatus => await DeleteEntity(problemStatus, cancellationToken),
-            () => Task.FromResult<Result<ProblemStatus, ProblemStatusException>>
-                (new ProblemStatusNotFoundException(problemStatusId)));
+        return await existingProblem.Match<Task<Result<Problem, ProblemException>>>(
+            async problem => await DeleteEntity(problem, cancellationToken),
+            () => Task.FromResult<Result<Problem, ProblemException>>
+                (new ProblemNotFoundException(problemId)));
     }
 
-    private async Task<Result<ProblemStatus, ProblemStatusException>> DeleteEntity(
-        ProblemStatus problemStatus,
+    private async Task<Result<Problem, ProblemException>> DeleteEntity(
+        Problem problem,
         CancellationToken cancellationToken)
     {
         try
         {
-            return await problemStatusRepository.Delete(problemStatus, cancellationToken);
+            return await problemRepository.Delete(problem, cancellationToken);
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23503")
         {
-            return new ProblemStatusHasRelatedProductsException(problemStatus.Id);
+            return new ProblemHasRelatedEntitiesException(problem.Id);
         }
         catch (Exception exception)
         {
-            return new ProblemStatusUnknownException(problemStatus.Id, exception);
+            return new ProblemUnknownException(problem.Id, exception);
         }
     }
 }

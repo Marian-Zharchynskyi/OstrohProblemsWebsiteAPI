@@ -11,7 +11,9 @@ public record CreateProblemCommand : IRequest<Result<Problem, ProblemException>>
 {
     public required string Title { get; init; }
     public required double Latitude { get; init; }
-    public required double Longitude { get; init; }
+    public required double Longitude { get;init; }
+    public required string Description { get; init; }
+    public required ProblemStatusId ProblemStatusId { get; init; }
 }
 
 public class CreateProblemCommandHandler(
@@ -28,16 +30,32 @@ public class CreateProblemCommandHandler(
         return await existingProblem.Match(
             c => Task.FromResult<Result<Problem, ProblemException>>(
                 new ProblemAlreadyExistsException(c.Id)),
-            async () => await CreateEntity(request.Title, request.Latitude, request.Longitude, cancellationToken));
+            async () => await CreateEntity(
+                request.Title,
+                request.Latitude,
+                request.Longitude,
+                request.Description,
+                request.ProblemStatusId,
+                cancellationToken));
     }
 
     private async Task<Result<Problem, ProblemException>> CreateEntity(
-        string title, double latitude, double longitude,
+        string title,
+        double latitude,
+        double longitude,
+        string description,
+        ProblemStatusId problemStatusId,
         CancellationToken cancellationToken)
     {
         try
         {
-            var entity = Problem.New(ProblemId.New(), title, latitude, longitude,"", ProblemStatusId.New());
+            var entity = Problem.New(
+                ProblemId.New(),
+                title,
+                latitude,
+                longitude,
+                description,
+                problemStatusId);
 
             return await problemRepository.Add(entity, cancellationToken);
         }

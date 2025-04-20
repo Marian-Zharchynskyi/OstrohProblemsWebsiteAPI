@@ -20,5 +20,16 @@ public class CreateProblemCommandValidator: AbstractValidator<CreateProblemComma
         RuleFor(x => x.Longitude)
             .InclusiveBetween(-180, 180)
             .WithMessage("Longitude must be between -180 and 180 degrees.");
+        
+        RuleFor(x => x.Description)
+            .NotEmpty()
+            .WithMessage("Description is required.")
+            .MinimumLength(3)
+            .MaximumLength(2000)
+            .WithMessage("Description must be between 3 and 2000 characters.");
+
+        RuleFor(x => x.ProblemStatusId)
+            .NotNull()
+            .WithMessage("Problem status is required.");
     }
 }

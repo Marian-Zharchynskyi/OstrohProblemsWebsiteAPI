@@ -1,48 +1,64 @@
 using Application.Common;
 using Application.Common.Interfaces.Repositories;
-using Application.ProblemStatuses.Exceptions;
+using Application.Problems.Exceptions;
+using Domain.Problems;
 using Domain.ProblemStatuses;
 using MediatR;
 
 namespace Application.Problems.Commands;
 
-public record UpdateProblemCommand : IRequest<Result<ProblemStatus, ProblemStatusException>>
+public record UpdateProblemCommand : IRequest<Result<Problem, ProblemException>>
 {
-    public required Guid ProblemStatusId { get; init; }
-    public required string Name { get; init; }
+    public required Guid Id { get; init; }
+    public required string Title { get; init; }
+    public required double Latitude { get; init; }
+    public required double Longitude { get; init; }
+    public required string Description { get; init; }
+    public required ProblemStatusId ProblemStatusId { get; init; }
 }
 
-public class UpdateProblemStatusCommandHandler(
-    IProblemStatusRepository problemStatusRepository)
-    : IRequestHandler<UpdateProblemCommand, Result<ProblemStatus, ProblemStatusException>>
+public class UpdateProblemCommandHandler(
+    IProblemRepository problemRepository)
+    : IRequestHandler<UpdateProblemCommand, Result<Problem, ProblemException>>
 {
-    public async Task<Result<ProblemStatus, ProblemStatusException>> Handle(
+    public async Task<Result<Problem, ProblemException>> Handle(
         UpdateProblemCommand request,
         CancellationToken cancellationToken)
     {
-        var problemStatusId = new ProblemStatusId(request.ProblemStatusId);
-        var existingProblemStatus = await problemStatusRepository.GetById(problemStatusId, cancellationToken);
+        var problemId = new ProblemId(request.Id);
+        var existingProblem = await problemRepository.GetById(problemId, cancellationToken);
 
-        return await existingProblemStatus.Match<Task<Result<ProblemStatus, ProblemStatusException>>>(
-            async problemStatus => await UpdateProblemStatus(problemStatus, request.Name, cancellationToken),
-            () => Task.FromResult<Result<ProblemStatus, ProblemStatusException>>(
-                new ProblemStatusNotFoundException(problemStatusId))
+        return await existingProblem.Match<Task<Result<Problem, ProblemException>>>(
+            async problem => await UpdateEntity(
+                problem,
+                request.Title,
+                request.Latitude,
+                request.Longitude,
+                request.Description,
+                request.ProblemStatusId,
+                cancellationToken),
+            () => Task.FromResult<Result<Problem, ProblemException>>(
+                new ProblemNotFoundException(problemId))
         );
     }
 
-    private async Task<Result<ProblemStatus, ProblemStatusException>> UpdateProblemStatus(
-        ProblemStatus problemStatus,
-        string name,
+    private async Task<Result<Problem, ProblemException>> UpdateEntity(
+        Problem problem,
+        string title,
+        double latitude,
+        double longitude,
+        string description,
+        ProblemStatusId problemStatusId,
         CancellationToken cancellationToken)
     {
         try
         {
-            problemStatus.UpdateName(name);
-            return await problemStatusRepository.Update(problemStatus, cancellationToken);
+            problem.UpdateProblem(title, latitude, longitude, description, problemStatusId);
+            return await problemRepository.Update(problem, cancellationToken);
         }
         catch (Exception exception)
         {
-            return new ProblemStatusUnknownException(problemStatus.Id, exception);
+            return new ProblemUnknownException(problem.Id, exception);
         }
     }
 }
