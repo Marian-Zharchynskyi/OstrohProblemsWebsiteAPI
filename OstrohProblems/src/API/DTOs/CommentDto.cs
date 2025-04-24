@@ -1,6 +1,6 @@
 ﻿using Domain.Comments;
 
-namespace Api.Dtos;
+namespace API.DTOs;
 
 public record CommentDto(Guid? Id, string Content, Guid ProblemId)
 {

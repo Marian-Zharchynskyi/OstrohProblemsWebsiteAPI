@@ -1,6 +1,6 @@
 ﻿using Domain.ProblemCategories;
 
-namespace Api.Dtos;
+namespace API.DTOs;
 
 public record ProblemCategoryDto(Guid? Id, string Name)
 {

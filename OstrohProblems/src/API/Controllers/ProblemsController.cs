@@ -1,8 +1,9 @@
-﻿using Api.Dtos;
+﻿using API.DTOs.Problems;
 using Api.Modules.Errors;
 using Application.Common.Interfaces.Queries;
 using Application.Problems.Commands;
 using Domain.Problems;
+using Domain.ProblemStatuses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,15 +35,58 @@ public class ProblemsController(
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<ProblemDto>> Create(
-        [FromBody] ProblemDto request,
+    public async Task<ActionResult<CreateProblemDto>> Create(
+        [FromBody] CreateProblemDto request,
         CancellationToken cancellationToken)
     {
         var input = new CreateProblemCommand
         {
             Title = request.Title,
             Latitude = request.Latitude,
-            Longitude = request.Longitude
+            Longitude = request.Longitude,
+            Description = request.Description,
+            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId)
+        };
+
+        var result = await sender.Send(input, cancellationToken);
+
+        return result.Match<ActionResult<CreateProblemDto>>(
+            problem => CreateProblemDto.FromDomainModel(problem),
+            e => e.ToObjectResult());
+    }
+
+    [HttpPut("update/{problemId:guid}")]
+    public async Task<ActionResult<CreateProblemDto>> Update(
+        [FromRoute] Guid problemId,
+        [FromBody] CreateProblemDto request,
+        CancellationToken cancellationToken)
+    {
+
+        var input = new UpdateProblemCommand
+        {
+            Id = problemId,
+            Title = request.Title,
+            Latitude = request.Latitude,
+            Longitude = request.Longitude,
+            Description = request.Description,
+            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId)
+        };
+
+        var result = await sender.Send(input, cancellationToken);
+
+        return result.Match<ActionResult<CreateProblemDto>>(
+            problem => CreateProblemDto.FromDomainModel(problem),
+            e => e.ToObjectResult());
+    }
+
+    [HttpDelete("delete/{problemId:guid}")]
+    public async Task<ActionResult<ProblemDto>> Delete(
+        [FromRoute] Guid problemId, 
+        CancellationToken cancellationToken)
+    {
+        var input = new DeleteProblemCommand
+        {
+            ProblemId = problemId
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -51,40 +95,4 @@ public class ProblemsController(
             problem => ProblemDto.FromDomainModel(problem),
             e => e.ToObjectResult());
     }
-
-    // [HttpPut("update")]
-    // public async Task<ActionResult<ProblemDto>> Update(
-    //     [FromBody] ProblemDto request,
-    //     CancellationToken cancellationToken)
-    // {
-    //     var input = new UpdateProblemCommand
-    //     {
-    //         ProblemId = request.Id!.Value,
-    //         Title = request.Title,
-    //         Latitude = request.Latitude,
-    //         Longitude = request.Longitude
-    //     };
-    //
-    //     var result = await sender.Send(input, cancellationToken);
-    //
-    //     return result.Match<ActionResult<ProblemDto>>(
-    //         problem => ProblemDto.FromDomainModel(problem),
-    //         e => e.ToObjectResult());
-    // }
-    //
-    // [HttpDelete("delete/{problemId:guid}")]
-    // public async Task<ActionResult<ProblemDto>> Delete(
-    //     [FromRoute] Guid problemId, CancellationToken cancellationToken)
-    // {
-    //     var input = new DeleteProblemCommand
-    //     {
-    //         ProblemId = problemId
-    //     };
-    //
-    //     var result = await sender.Send(input, cancellationToken);
-    //
-    //     return result.Match<ActionResult<ProblemDto>>(
-    //         problem => ProblemDto.FromDomainModel(problem),
-    //         e => e.ToObjectResult());
-    // }
 }

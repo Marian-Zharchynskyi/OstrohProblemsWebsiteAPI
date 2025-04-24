@@ -1,6 +1,6 @@
 ﻿using Domain.ProblemStatuses;
 
-namespace Api.Dtos;
+namespace API.DTOs;
 
 public record ProblemStatusDto(Guid? Id, string Name)
 {

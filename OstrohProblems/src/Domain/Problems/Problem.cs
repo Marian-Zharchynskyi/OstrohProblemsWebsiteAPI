@@ -21,7 +21,7 @@ public class Problem
     public DateTime UpdatedAt { get; private set; }
 
     private Problem(ProblemId id, string title, double latitude, double longitude, string description,
-        ProblemStatusId problemStatusId, DateTime createdAt)
+        ProblemStatusId problemStatusId, DateTime createdAt, DateTime updatedAt)
     {
         Id = id;
         Title = title;
@@ -30,12 +30,13 @@ public class Problem
         Description = description;
         ProblemStatusId = problemStatusId;
         CreatedAt = createdAt;
+        UpdatedAt = updatedAt;
     }
 
     public static Problem New(ProblemId id, string title, double latitude, double longitude, string description,
         ProblemStatusId problemStatusId)
     {
-        return new Problem(id, title, latitude, longitude, description, problemStatusId, DateTime.Now);
+        return new Problem(id, title, latitude, longitude, description, problemStatusId, DateTime.UtcNow, DateTime.UtcNow);
     }
 
     public void UpdateProblem(string title, double latitude, double longitude, string description, ProblemStatusId problemStatusId)
@@ -45,6 +46,6 @@ public class Problem
         Longitude = longitude;
         Description = description;
         ProblemStatusId = problemStatusId;
-        UpdatedAt = DateTime.Now;
+        UpdatedAt = DateTime.UtcNow;
     }
 }

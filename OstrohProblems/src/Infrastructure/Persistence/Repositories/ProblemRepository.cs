@@ -11,6 +11,8 @@ public class ProblemRepository(ApplicationDbContext context) : IProblemQueries, 
     public async Task<IReadOnlyList<Problem>> GetAll(CancellationToken cancellationToken)
     {
         return await context.Problems
+            .Include(x => x.Categories)
+            .Include(x => x.Comments)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -18,6 +20,9 @@ public class ProblemRepository(ApplicationDbContext context) : IProblemQueries, 
     public async Task<Option<Problem>> GetById(ProblemId id, CancellationToken cancellationToken)
     {
         var entity = await context.Problems
+            .Include(x => x.Categories)
+            .Include(x => x.Comments)
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return entity == null ? Option.None<Problem>() : Option.Some(entity);

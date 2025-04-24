@@ -1,4 +1,4 @@
-using Api.Dtos;
+using API.DTOs;
 using FluentValidation;
 
 namespace Api.Modules.Validators;

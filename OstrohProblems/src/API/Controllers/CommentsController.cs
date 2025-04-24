@@ -1,4 +1,4 @@
-﻿using Api.Dtos;
+﻿using API.DTOs;
 using Api.Modules.Errors;
 using Application.Comments.Commands;
 using Application.Common.Interfaces.Queries;
