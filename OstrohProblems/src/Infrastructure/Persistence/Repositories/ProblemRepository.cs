@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
+using Domain.ProblemCategories;
 using Domain.Problems;
 using Microsoft.EntityFrameworkCore;
 using Optional;
@@ -13,6 +14,7 @@ public class ProblemRepository(ApplicationDbContext context) : IProblemQueries, 
         return await context.Problems
             .Include(x => x.Categories)
             .Include(x => x.Comments)
+            .Include(x => x.ProblemStatus)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -22,6 +24,7 @@ public class ProblemRepository(ApplicationDbContext context) : IProblemQueries, 
         var entity = await context.Problems
             .Include(x => x.Categories)
             .Include(x => x.Comments)
+            .Include(x => x.ProblemStatus)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
@@ -50,12 +53,12 @@ public class ProblemRepository(ApplicationDbContext context) : IProblemQueries, 
         await context.SaveChangesAsync(cancellationToken);
         return problem;
     }
-
-
+    
     public async Task<Problem> Delete(Problem problem, CancellationToken cancellationToken)
     {
         context.Problems.Remove(problem);
         await context.SaveChangesAsync(cancellationToken);
         return problem;
     }
+
 }

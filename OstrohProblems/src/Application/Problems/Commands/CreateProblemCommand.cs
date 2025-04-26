@@ -14,10 +14,12 @@ public record CreateProblemCommand : IRequest<Result<Problem, ProblemException>>
     public required double Longitude { get;init; }
     public required string Description { get; init; }
     public required ProblemStatusId ProblemStatusId { get; init; }
+    public List<Guid>? ProblemCategoryIds { get; init; }
 }
 
 public class CreateProblemCommandHandler(
-    IProblemRepository problemRepository)
+    IProblemRepository problemRepository,
+    IProblemCategoryRepository problemCategoryRepository)
     : IRequestHandler<CreateProblemCommand, Result<Problem, ProblemException>>
 {
     public async Task<Result<Problem, ProblemException>> Handle(
@@ -36,6 +38,7 @@ public class CreateProblemCommandHandler(
                 request.Longitude,
                 request.Description,
                 request.ProblemStatusId,
+                request.ProblemCategoryIds,
                 cancellationToken));
     }
 
@@ -45,6 +48,7 @@ public class CreateProblemCommandHandler(
         double longitude,
         string description,
         ProblemStatusId problemStatusId,
+        List<Guid>? problemCategoryIds,
         CancellationToken cancellationToken)
     {
         try
@@ -56,6 +60,16 @@ public class CreateProblemCommandHandler(
                 longitude,
                 description,
                 problemStatusId);
+
+            if (problemCategoryIds is not null && problemCategoryIds.Count > 0)
+            {
+                var categories = await problemCategoryRepository.GetCategoriesByIdsAsync(problemCategoryIds, cancellationToken);
+
+                foreach (var category in categories)
+                {
+                    entity.AddCategory(category);
+                }
+            }
 
             return await problemRepository.Add(entity, cancellationToken);
         }

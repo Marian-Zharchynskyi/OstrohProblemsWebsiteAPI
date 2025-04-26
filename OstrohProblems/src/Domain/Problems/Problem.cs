@@ -48,4 +48,15 @@ public class Problem
         ProblemStatusId = problemStatusId;
         UpdatedAt = DateTime.UtcNow;
     }
+    
+    public void AddCategory(ProblemCategory category)
+    {
+        if (category == null)
+            throw new ArgumentNullException(nameof(category));
+
+        if (Categories.Any(c => c.Id == category.Id))
+            return; 
+
+        Categories.Add(category);
+    }
 }

@@ -7,7 +7,8 @@ public record CreateProblemDto(
     double Latitude,
     double Longitude,
     string Description,
-    Guid ProblemStatusId)
+    Guid ProblemStatusId,
+    List<ProblemCategoryDto>? ProblemCategories)
 {
     public static CreateProblemDto FromDomainModel(Problem problem)
         => new(
@@ -15,6 +16,9 @@ public record CreateProblemDto(
             problem.Latitude,
             problem.Longitude,
             problem.Description,
-            problem.ProblemStatusId.Value
+            problem.ProblemStatusId.Value,
+            problem.Categories.Count == 0
+                ? null
+                : problem.Categories.Select(ProblemCategoryDto.FromDomainModel).ToList()
         );
 }

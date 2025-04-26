@@ -59,4 +59,11 @@ public class ProblemCategoryRepository : IProblemCategoryRepository, IProblemCat
         await _context.SaveChangesAsync(cancellationToken);
         return category;
     }
+    
+    public async Task<List<ProblemCategory>> GetCategoriesByIdsAsync(List<Guid> ids, CancellationToken cancellationToken)
+    {
+        return await _context.ProblemCategories
+            .Where(c => ids.Contains(c.Id.Value))
+            .ToListAsync(cancellationToken);
+    }
 }
