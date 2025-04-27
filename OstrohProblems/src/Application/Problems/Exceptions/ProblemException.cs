@@ -19,3 +19,9 @@ public class ProblemUnknownException(ProblemId id, Exception innerException)
 
 public class ProblemHasRelatedEntitiesException(ProblemId id)
     : ProblemException(id, $"Problem with ID {id} cannot be deleted because it has related entities.");
+    
+public class ImageSaveException(ProblemId id)
+    : ProblemException(id, $"Problem under id: {id} have problems with saving images!");
+
+public class ImageNotFoundException(ProblemImageId id)
+    : ProblemException(ProblemId.Empty, $"Product image under id: {id} not found!");

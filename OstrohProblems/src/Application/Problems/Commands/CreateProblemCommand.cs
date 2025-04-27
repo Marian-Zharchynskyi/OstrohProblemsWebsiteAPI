@@ -11,27 +11,32 @@ public record CreateProblemCommand : IRequest<Result<Problem, ProblemException>>
 {
     public required string Title { get; init; }
     public required double Latitude { get; init; }
-    public required double Longitude { get;init; }
+    public required double Longitude { get; init; }
     public required string Description { get; init; }
     public required ProblemStatusId ProblemStatusId { get; init; }
     public List<Guid>? ProblemCategoryIds { get; init; }
 }
 
-public class CreateProblemCommandHandler(
-    IProblemRepository problemRepository,
-    IProblemCategoryRepository problemCategoryRepository)
-    : IRequestHandler<CreateProblemCommand, Result<Problem, ProblemException>>
+public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand, Result<Problem, ProblemException>>
 {
+    private readonly IProblemRepository _problemRepository;
+    private readonly IProblemCategoryRepository _problemCategoryRepository;
+
+    public CreateProblemCommandHandler(
+        IProblemRepository problemRepository,
+        IProblemCategoryRepository problemCategoryRepository)
+    {
+        _problemRepository = problemRepository;
+        _problemCategoryRepository = problemCategoryRepository;
+    }
+
     public async Task<Result<Problem, ProblemException>> Handle(
         CreateProblemCommand request,
         CancellationToken cancellationToken)
     {
-        var existingProblem = await problemRepository.
-            SearchByTitle(request.Title, cancellationToken);
-
+        var existingProblem = await _problemRepository.SearchByTitle(request.Title, cancellationToken);
         return await existingProblem.Match(
-            c => Task.FromResult<Result<Problem, ProblemException>>(
-                new ProblemAlreadyExistsException(c.Id)),
+            c => Task.FromResult<Result<Problem, ProblemException>>(new ProblemAlreadyExistsException(c.Id)),
             async () => await CreateEntity(
                 request.Title,
                 request.Latitude,
@@ -63,7 +68,8 @@ public class CreateProblemCommandHandler(
 
             if (problemCategoryIds is not null && problemCategoryIds.Count > 0)
             {
-                var categories = await problemCategoryRepository.GetCategoriesByIdsAsync(problemCategoryIds, cancellationToken);
+                var categories =
+                    await _problemCategoryRepository.GetCategoriesByIdsAsync(problemCategoryIds, cancellationToken);
 
                 foreach (var category in categories)
                 {
@@ -71,10 +77,11 @@ public class CreateProblemCommandHandler(
                 }
             }
 
-            return await problemRepository.Add(entity, cancellationToken);
+            return await _problemRepository.Add(entity, cancellationToken);
         }
         catch (Exception exception)
         {
+            throw;
             return new ProblemUnknownException(ProblemId.Empty, exception);
         }
     }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    name = table.Column<string>(type: "varchar(100)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,7 +28,7 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    name = table.Column<string>(type: "varchar(100)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,11 +40,13 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    latitude = table.Column<double>(type: "double precision", maxLength: 50, nullable: false),
-                    longitude = table.Column<double>(type: "double precision", maxLength: 50, nullable: false),
-                    description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    problem_status_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    title = table.Column<string>(type: "varchar(100)", nullable: false),
+                    latitude = table.Column<double>(type: "double precision", nullable: false),
+                    longitude = table.Column<double>(type: "double precision", nullable: false),
+                    description = table.Column<string>(type: "varchar(300)", nullable: false),
+                    problem_status_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,9 +64,10 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    content = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    problem_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    content = table.Column<string>(type: "varchar(300)", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())"),
+                    problem_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())")
                 },
                 constraints: table =>
                 {
@@ -101,6 +104,27 @@ namespace Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "problem_ratings",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    problem_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    rating = table.Column<double>(type: "double precision", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_problem_ratings", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_problem_ratings_problems_problem_id",
+                        column: x => x.problem_id,
+                        principalTable: "problems",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "ix_comments_problem_id",
                 table: "comments",
@@ -110,6 +134,12 @@ namespace Infrastructure.Persistence.Migrations
                 name: "ix_fk_problem_categories_problems_id",
                 table: "fk_problem_categories",
                 column: "problems_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_problem_ratings_problem_id_user_id",
+                table: "problem_ratings",
+                columns: new[] { "problem_id", "user_id" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_problems_problem_status_id",
@@ -125,6 +155,9 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "fk_problem_categories");
+
+            migrationBuilder.DropTable(
+                name: "problem_ratings");
 
             migrationBuilder.DropTable(
                 name: "problem_categories");

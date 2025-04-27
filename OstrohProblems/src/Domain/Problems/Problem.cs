@@ -17,6 +17,7 @@ public class Problem
     public ICollection<Comment> Comments { get; private set; } = new List<Comment>();
     public ICollection<ProblemCategory> Categories { get; private set; } = new List<ProblemCategory>();
     public ICollection<ProblemRating> Ratings { get; private set; } = new List<ProblemRating>();
+    public List<ProblemImage> Images { get; private set; } = [];
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
@@ -58,5 +59,17 @@ public class Problem
             return; 
 
         Categories.Add(category);
+    }
+    
+    public void UploadProblemImages(List<ProblemImage> images)
+        => Images.AddRange(images);
+        
+    public void RemoveImage(ProblemImageId productImageId)
+    {
+        var image = Images.FirstOrDefault(x => x.Id == productImageId);
+        if (image != null)
+        {
+            Images.Remove(image);
+        }
     }
 }

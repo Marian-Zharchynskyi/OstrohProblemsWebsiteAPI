@@ -20,11 +20,11 @@ public class ProblemConfiguration : IEntityTypeConfiguration<Problem>
         
         builder.Property(p => p.Longitude)
             .IsRequired()
-            .HasColumnType("varchar(50)");
+            .HasColumnType("double precision");
         
         builder.Property(p => p.Latitude)
             .IsRequired()
-            .HasColumnType("varchar(50)");
+            .HasColumnType("double precision");
 
         builder.Property(p => p.Description)
             .IsRequired()

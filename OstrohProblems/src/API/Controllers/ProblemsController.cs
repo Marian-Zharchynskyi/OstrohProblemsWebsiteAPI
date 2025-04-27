@@ -46,7 +46,7 @@ public class ProblemsController(
             Longitude = request.Longitude,
             Description = request.Description,
             ProblemStatusId = new ProblemStatusId(request.ProblemStatusId),
-            ProblemCategoryIds = request.ProblemCategories?.Select(x => x.Id!.Value).ToList()
+            ProblemCategoryIds = request.ProblemCategoryIds
         };
 
         var result = await sender.Send(input, cancellationToken);

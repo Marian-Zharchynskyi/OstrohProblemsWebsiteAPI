@@ -141,14 +141,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(300)")
                         .HasColumnName("description");
 
-                    b.Property<string>("Latitude")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision")
                         .HasColumnName("latitude");
 
-                    b.Property<string>("Longitude")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision")
                         .HasColumnName("longitude");
 
                     b.Property<Guid>("ProblemStatusId")

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250406164250_addedTimeColumnToCommentTable")]
-    partial class addedTimeColumnToCommentTable
+    [Migration("20250427080500_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,6 +78,40 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("problem_categories", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.ProblemRatings.ProblemRating", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<Guid>("ProblemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("problem_id");
+
+                    b.Property<double>("Rating")
+                        .HasColumnType("double precision")
+                        .HasColumnName("rating");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_problem_ratings");
+
+                    b.HasIndex("ProblemId", "UserId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_problem_ratings_problem_id_user_id");
+
+                    b.ToTable("problem_ratings", (string)null);
+                });
+
             modelBuilder.Entity("Domain.ProblemStatuses.ProblemStatus", b =>
                 {
                     b.Property<Guid>("Id")
@@ -101,19 +135,21 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("varchar(300)")
                         .HasColumnName("description");
 
-                    b.Property<string>("Latitude")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision")
                         .HasColumnName("latitude");
 
-                    b.Property<string>("Longitude")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision")
                         .HasColumnName("longitude");
 
                     b.Property<Guid>("ProblemStatusId")
@@ -124,6 +160,10 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(100)")
                         .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id")
                         .HasName("pk_problems");
@@ -165,6 +205,18 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Problem");
                 });
 
+            modelBuilder.Entity("Domain.ProblemRatings.ProblemRating", b =>
+                {
+                    b.HasOne("Domain.Problems.Problem", "Problem")
+                        .WithMany("Ratings")
+                        .HasForeignKey("ProblemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_problem_ratings_problems_problem_id");
+
+                    b.Navigation("Problem");
+                });
+
             modelBuilder.Entity("Domain.Problems.Problem", b =>
                 {
                     b.HasOne("Domain.ProblemStatuses.ProblemStatus", "ProblemStatus")
@@ -202,6 +254,8 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Domain.Problems.Problem", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }
