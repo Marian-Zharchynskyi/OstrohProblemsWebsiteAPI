@@ -12,9 +12,17 @@ public static class ProblemErrorHandler
         {
             StatusCode = exception switch
             {
-                ProblemNotFoundException => StatusCodes.Status404NotFound,
-                ProblemAlreadyExistsException => StatusCodes.Status409Conflict,
-                ProblemUnknownException => StatusCodes.Status500InternalServerError,
+                ProblemNotFoundException
+                    or ImageNotFoundException 
+                    => StatusCodes.Status404NotFound,
+                
+                ProblemAlreadyExistsException 
+                    => StatusCodes.Status409Conflict,
+                
+                ProblemUnknownException 
+                    or ImageSaveException 
+                    => StatusCodes.Status500InternalServerError,
+                
                 _ => throw new NotImplementedException("Problem error handler does not implemented")
             }
         };

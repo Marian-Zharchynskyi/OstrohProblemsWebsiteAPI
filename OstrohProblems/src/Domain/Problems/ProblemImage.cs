@@ -7,13 +7,13 @@ public class ProblemImage
     public ProblemId ProblemId { get; }
     public string FilePath { get; private set; }
 
-    private ProblemImage(ProblemImageId id, ProblemId productId, string filePath)
+    private ProblemImage(ProblemImageId id, ProblemId problemId, string filePath)
     {
         Id = id; 
-        ProblemId = productId;
+        ProblemId = problemId;
         FilePath = filePath;
     }
 
-    public static ProblemImage New(ProblemImageId id, ProblemId productId, string filePath) 
-        => new ProblemImage(id, productId, filePath);
+    public static ProblemImage New(ProblemImageId id, ProblemId problemId, string filePath) 
+        => new ProblemImage(id, problemId, filePath);
 }

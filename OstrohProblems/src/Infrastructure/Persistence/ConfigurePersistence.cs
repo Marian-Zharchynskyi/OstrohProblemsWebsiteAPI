@@ -1,6 +1,6 @@
 using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
-using Domain.ProblemCategories;
+using Application.Services.ImageService;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +54,8 @@ public static class ConfigurePersistence
         services.AddScoped<CommentRepository>();
         services.AddScoped<ICommentRepository>(provider => provider.GetRequiredService<CommentRepository>());
         services.AddScoped<ICommentQueries>(provider => provider.GetRequiredService<CommentRepository>());
+        
+        services.AddScoped<IImageService, ImageService>();
     }
 
     /*private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)

@@ -45,8 +45,7 @@ public class ProblemsController(
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             Description = request.Description,
-            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId),
-            ProblemCategoryIds = request.ProblemCategoryIds
+            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId)
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -94,6 +93,40 @@ public class ProblemsController(
 
         return result.Match<ActionResult<ProblemDto>>(
             problem => ProblemDto.FromDomainModel(problem),
+            e => e.ToObjectResult());
+    }
+    
+    [HttpPut("upload-images/{problemId:guid}")]
+    public async Task<ActionResult<ProblemDto>> Upload([FromRoute] Guid problemId, IFormFileCollection imagesFiles,
+        CancellationToken cancellationToken)
+    {
+        var input = new UploadProblemImagesCommand()
+        {
+            ProblemId = problemId,
+            ImagesFiles = imagesFiles
+        };
+
+        var result = await sender.Send(input, cancellationToken);
+
+        return result.Match<ActionResult<ProblemDto>>(
+            r => ProblemDto.FromDomainModel(r),
+            e => e.ToObjectResult());
+    }
+
+    [HttpPut("delete-image/{problemId:guid}")]
+    public async Task<ActionResult<ProblemDto>> Upload([FromRoute] Guid problemId, Guid problemImageId,
+        CancellationToken cancellationToken)
+    {
+        var input = new DeleteProblemImageCommand()
+        {
+            ProblemId = problemId,
+            ProblemImageId = problemImageId
+        };
+
+        var result = await sender.Send(input, cancellationToken);
+
+        return result.Match<ActionResult<ProblemDto>>(
+            r => ProblemDto.FromDomainModel(r),
             e => e.ToObjectResult());
     }
 }

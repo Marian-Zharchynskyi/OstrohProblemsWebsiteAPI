@@ -10,7 +10,7 @@ public record ProblemDto(
     string Description,
     ProblemStatusDto? ProblemStatus,
     List<CommentDto>? Comment,
-    List<ProblemCategoryDto>? ProblemCategories,
+    List<ProblemImageDto>? Images,
     DateTime CreatedAt,
     DateTime UpdatedAt)
 {
@@ -23,9 +23,7 @@ public record ProblemDto(
             problem.Description,
             problem.ProblemStatus == null ? null : ProblemStatusDto.FromDomainModel(problem.ProblemStatus),
             problem.Comments.Count == 0 ? null : problem.Comments.Select(CommentDto.FromDomainModel).ToList(),
-            problem.Categories.Count == 0
-                ? null
-                : problem.Categories.Select(ProblemCategoryDto.FromDomainModel).ToList(),
+            problem.Images.Select(ProblemImageDto.FromDomainModel).ToList(),
             problem.CreatedAt,
             problem.UpdatedAt
         );
