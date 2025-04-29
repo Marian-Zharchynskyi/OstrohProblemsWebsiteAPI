@@ -3,7 +3,7 @@ namespace Domain.Problems;
 public class ProblemImage
 {
     public ProblemImageId Id { get; }
-    public Problem? Problem { get; }
+    public Problem? Problem { get; private set; } 
     public ProblemId ProblemId { get; }
     public string FilePath { get; private set; }
 

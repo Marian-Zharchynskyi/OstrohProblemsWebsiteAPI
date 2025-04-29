@@ -15,6 +15,7 @@ public class ProblemRepository(ApplicationDbContext context) : IProblemQueries, 
             .Include(x => x.Categories)
             .Include(x => x.Comments)
             .Include(x => x.ProblemStatus)
+            .Include(x => x.Images)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -25,7 +26,7 @@ public class ProblemRepository(ApplicationDbContext context) : IProblemQueries, 
             .Include(x => x.Categories)
             .Include(x => x.Comments)
             .Include(x => x.ProblemStatus)
-            .AsNoTracking()
+            .Include(x => x.Images)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return entity == null ? Option.None<Problem>() : Option.Some(entity);

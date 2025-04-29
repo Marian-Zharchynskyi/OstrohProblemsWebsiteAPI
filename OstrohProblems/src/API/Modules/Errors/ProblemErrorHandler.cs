@@ -21,6 +21,7 @@ public static class ProblemErrorHandler
                 
                 ProblemUnknownException 
                     or ImageSaveException 
+                    or ProblemConcurrencyException
                     => StatusCodes.Status500InternalServerError,
                 
                 _ => throw new NotImplementedException("Problem error handler does not implemented")

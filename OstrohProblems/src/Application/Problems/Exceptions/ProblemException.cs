@@ -25,3 +25,8 @@ public class ImageSaveException(ProblemId id)
 
 public class ImageNotFoundException(ProblemImageId id)
     : ProblemException(ProblemId.Empty, $"Product image under id: {id} not found!");
+
+public class ProblemConcurrencyException(ProblemId id)
+    : ProblemException(id, $"Problem with ID {id.Value} was changed or deleted by another user.");
+    
+    

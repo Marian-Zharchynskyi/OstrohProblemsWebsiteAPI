@@ -6,6 +6,7 @@ using Application.Services.ImageService;
 using Domain.Problems;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Problems.Commands;
 
@@ -30,7 +31,7 @@ public class UploadProblemImagesCommandHandler(
             () => Task.FromResult<Result<Problem, ProblemException>>(
                 new ProblemNotFoundException(problemId)));
     }
-    
+
     private async Task<Result<Problem, ProblemException>> UploadImages(
         Problem problem,
         IFormFileCollection imagesFiles,
@@ -47,11 +48,18 @@ public class UploadProblemImagesCommandHandler(
                 {
                     imagesEntities.Add(ProblemImage.New(ProblemImageId.New(), problem.Id, imageName));
                 }
-                
+
                 problem.UploadProblemImages(imagesEntities);
-                
-                var problemWithImages = await problemRepository.Update(problem, cancellationToken);
-                return problemWithImages;
+
+                try
+                {
+                    var problemWithImages = await problemRepository.Update(problem, cancellationToken);
+                    return problemWithImages;
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return new ProblemConcurrencyException(problem.Id);
+                }
             },
             () => Task.FromResult<Result<Problem, ProblemException>>(new ImageSaveException(problem.Id)));
     }
