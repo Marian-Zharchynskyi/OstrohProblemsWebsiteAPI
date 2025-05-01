@@ -61,5 +61,4 @@ public class ProblemRepository(ApplicationDbContext context) : IProblemQueries, 
         await context.SaveChangesAsync(cancellationToken);
         return problem;
     }
-
 }

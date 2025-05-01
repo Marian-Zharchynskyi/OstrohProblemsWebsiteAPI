@@ -1,4 +1,4 @@
-namespace Application.Services;
+namespace Application.Services.ImageService;
 
 public static class ImagePaths
 {
