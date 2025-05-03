@@ -31,5 +31,9 @@ public class CreateProblemCommandValidator: AbstractValidator<CreateProblemComma
         RuleFor(x => x.ProblemStatusId)
             .NotNull()
             .WithMessage("Problem status is required.");
+        
+        RuleFor(x => x.ProblemCategoryIds)
+            .NotNull()
+            .WithMessage("Problem category list should not be null.");
     }
 }

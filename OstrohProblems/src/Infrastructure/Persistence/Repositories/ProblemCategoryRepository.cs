@@ -6,25 +6,19 @@ using Optional;
 
 namespace Infrastructure.Persistence.Repositories;
 
-public class ProblemCategoryRepository : IProblemCategoryRepository, IProblemCategoryQueries
+public class ProblemCategoryRepository(ApplicationDbContext context)
+    : IProblemCategoryRepository, IProblemCategoryQueries
 {
-    private readonly ApplicationDbContext _context;
-
-    public ProblemCategoryRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<IReadOnlyList<ProblemCategory>> GetAll(CancellationToken cancellationToken)
     {
-        return await _context.ProblemCategories
+        return await context.ProblemCategories
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 
     public async Task<Option<ProblemCategory>> GetById(ProblemCategoryId id, CancellationToken cancellationToken)
     {
-        var entity = await _context.ProblemCategories
+        var entity = await context.ProblemCategories
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return entity == null ? Option.None<ProblemCategory>() : Option.Some(entity);
@@ -32,7 +26,7 @@ public class ProblemCategoryRepository : IProblemCategoryRepository, IProblemCat
 
     public async Task<Option<ProblemCategory>> SearchByName(string name, CancellationToken cancellationToken)
     {
-        var entity = await _context.ProblemCategories
+        var entity = await context.ProblemCategories
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Name == name, cancellationToken);
 
@@ -41,29 +35,33 @@ public class ProblemCategoryRepository : IProblemCategoryRepository, IProblemCat
 
     public async Task<ProblemCategory> Add(ProblemCategory category, CancellationToken cancellationToken)
     {
-        await _context.ProblemCategories.AddAsync(category, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.ProblemCategories.AddAsync(category, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         return category;
     }
 
     public async Task<ProblemCategory> Update(ProblemCategory category, CancellationToken cancellationToken)
     {
-        _context.ProblemCategories.Update(category);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.ProblemCategories.Update(category);
+        await context.SaveChangesAsync(cancellationToken);
         return category;
     }
 
     public async Task<ProblemCategory> Delete(ProblemCategory category, CancellationToken cancellationToken)
     {
-        _context.ProblemCategories.Remove(category);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.ProblemCategories.Remove(category);
+        await context.SaveChangesAsync(cancellationToken);
         return category;
     }
     
-    public async Task<List<ProblemCategory>> GetCategoriesByIdsAsync(List<Guid> ids, CancellationToken cancellationToken)
+    public async Task<List<ProblemCategory>> GetByIdsAsync(List<Guid> ids, CancellationToken cancellationToken)
     {
-        return await _context.ProblemCategories
-            .Where(c => ids.Contains(c.Id.Value))
+        var problemCategoryIds = ids.Select(id => new ProblemCategoryId(id)).ToList();
+
+        return await context.ProblemCategories
+            .Where(pc => problemCategoryIds.Contains(pc.Id)) 
             .ToListAsync(cancellationToken);
     }
+
+
 }

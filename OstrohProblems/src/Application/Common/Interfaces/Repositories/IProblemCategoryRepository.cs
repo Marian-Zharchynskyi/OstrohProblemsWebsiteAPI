@@ -10,5 +10,5 @@ public interface IProblemCategoryRepository
     Task<ProblemCategory> Add(ProblemCategory problemStatus, CancellationToken cancellationToken);
     Task<ProblemCategory> Update(ProblemCategory problemStatus, CancellationToken cancellationToken);
     Task<ProblemCategory> Delete(ProblemCategory problemStatus, CancellationToken cancellationToken);
-    Task<List<ProblemCategory>> GetCategoriesByIdsAsync(List<Guid> ids, CancellationToken cancellationToken);
+    Task<List<ProblemCategory>> GetByIdsAsync(List<Guid> ids, CancellationToken cancellationToken);
 }

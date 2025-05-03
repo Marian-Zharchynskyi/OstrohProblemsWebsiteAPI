@@ -1,4 +1,3 @@
-using Domain.ProblemCategories;
 using Domain.Problems;
 using Optional;
 

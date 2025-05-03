@@ -14,31 +14,29 @@ public record CreateProblemCommand : IRequest<Result<Problem, ProblemException>>
     public required double Longitude { get; init; }
     public required string Description { get; init; }
     public required ProblemStatusId ProblemStatusId { get; init; }
+    public required List<Guid> ProblemCategoryIds { get; init; }
 }
 
-public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand, Result<Problem, ProblemException>>
+public class CreateProblemCommandHandler(
+    IProblemRepository problemRepository,
+    IProblemCategoryRepository categoryRepository)
+    : IRequestHandler<CreateProblemCommand, Result<Problem, ProblemException>>
 {
-    private readonly IProblemRepository _problemRepository;
-
-    public CreateProblemCommandHandler(IProblemRepository problemRepository)
-    {
-        _problemRepository = problemRepository;
-    }
-
     public async Task<Result<Problem, ProblemException>> Handle(
         CreateProblemCommand request,
         CancellationToken cancellationToken)
     {
-        var existingProblem = await _problemRepository.SearchByTitle(request.Title, cancellationToken);
+        var existingProblem = await problemRepository.SearchByTitle(request.Title, cancellationToken);
 
         return await existingProblem.Match(
-            c => Task.FromResult<Result<Problem, ProblemException>>(new ProblemAlreadyExistsException(c.Id)),
+            p => Task.FromResult<Result<Problem, ProblemException>>(new ProblemAlreadyExistsException(p.Id)),
             async () => await CreateEntity(
                 request.Title,
                 request.Latitude,
                 request.Longitude,
                 request.Description,
                 request.ProblemStatusId,
+                request.ProblemCategoryIds,
                 cancellationToken));
     }
 
@@ -48,11 +46,12 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
         double longitude,
         string description,
         ProblemStatusId problemStatusId,
+        List<Guid> categoryIds,
         CancellationToken cancellationToken)
     {
         try
         {
-            var entity = Problem.New(
+            var problem = Problem.New(
                 ProblemId.New(),
                 title,
                 latitude,
@@ -60,11 +59,22 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
                 description,
                 problemStatusId);
 
-            return await _problemRepository.Add(entity, cancellationToken);
+            if (categoryIds.Any())
+            {
+                var categories = await categoryRepository.GetByIdsAsync(categoryIds, cancellationToken);
+
+                foreach (var category in categories)
+                {
+                    problem.AddCategory(category);
+                }
+            }
+
+            return await problemRepository.Add(problem, cancellationToken);
         }
-        catch (Exception exception)
+        catch (Exception ex)
         {
-            return new ProblemUnknownException(ProblemId.Empty, exception);
+            return new ProblemUnknownException(ProblemId.Empty, ex);
         }
     }
 }
+

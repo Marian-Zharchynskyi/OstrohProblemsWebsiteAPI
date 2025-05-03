@@ -45,7 +45,8 @@ public class ProblemsController(
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             Description = request.Description,
-            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId)
+            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId),
+            ProblemCategoryIds = request.ProblemCategoryIds
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -61,7 +62,6 @@ public class ProblemsController(
         [FromBody] CreateProblemDto request,
         CancellationToken cancellationToken)
     {
-
         var input = new UpdateProblemCommand
         {
             Id = problemId,
@@ -69,7 +69,8 @@ public class ProblemsController(
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             Description = request.Description,
-            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId)
+            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId),
+            ProblemCategoryIds = request.ProblemCategoryIds 
         };
 
         var result = await sender.Send(input, cancellationToken);

@@ -15,10 +15,12 @@ public record UpdateProblemCommand : IRequest<Result<Problem, ProblemException>>
     public required double Longitude { get; init; }
     public required string Description { get; init; }
     public required ProblemStatusId ProblemStatusId { get; init; }
+    public List<Guid>? ProblemCategoryIds { get; init; } 
 }
 
 public class UpdateProblemCommandHandler(
-    IProblemRepository problemRepository)
+    IProblemRepository problemRepository,
+    IProblemCategoryRepository categoryRepository) 
     : IRequestHandler<UpdateProblemCommand, Result<Problem, ProblemException>>
 {
     public async Task<Result<Problem, ProblemException>> Handle(
@@ -36,6 +38,7 @@ public class UpdateProblemCommandHandler(
                 request.Longitude,
                 request.Description,
                 request.ProblemStatusId,
+                request.ProblemCategoryIds, 
                 cancellationToken),
             () => Task.FromResult<Result<Problem, ProblemException>>(
                 new ProblemNotFoundException(problemId))
@@ -49,11 +52,28 @@ public class UpdateProblemCommandHandler(
         double longitude,
         string description,
         ProblemStatusId problemStatusId,
+        List<Guid>? categoryIds,
         CancellationToken cancellationToken)
     {
         try
         {
             problem.UpdateProblem(title, latitude, longitude, description, problemStatusId);
+
+            if (categoryIds is not null && categoryIds.Any())
+            {
+                var existingCategoryIds = problem.Categories.Select(c => c.Id.Value).ToHashSet();
+                var newCategoryIds = categoryIds.Except(existingCategoryIds).ToList();
+
+                if (newCategoryIds.Any())
+                {
+                    var newCategories = await categoryRepository.GetByIdsAsync(newCategoryIds, cancellationToken);
+                    foreach (var category in newCategories)
+                    {
+                        problem.AddCategory(category);
+                    }
+                }
+            }
+
             return await problemRepository.Update(problem, cancellationToken);
         }
         catch (Exception exception)
