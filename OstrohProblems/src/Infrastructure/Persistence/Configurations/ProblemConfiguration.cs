@@ -1,5 +1,4 @@
 ﻿using Domain.Problems;
-using Domain.ProblemStatuses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -32,7 +31,7 @@ public class ProblemConfiguration : IEntityTypeConfiguration<Problem>
         
         builder.HasOne(ps => ps.ProblemStatus)
             .WithMany(pr => pr.Problems)
-            .HasForeignKey(p => p.ProblemStatusId)
+            .HasForeignKey(p => p.StatusId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(p => p.Comments)

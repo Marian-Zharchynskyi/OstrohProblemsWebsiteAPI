@@ -1,6 +1,5 @@
 using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
-using Domain.ProblemCategories;
 using Domain.Problems;
 using Microsoft.EntityFrameworkCore;
 using Optional;

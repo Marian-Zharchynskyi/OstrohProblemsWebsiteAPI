@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Api.Modules;
+using API.Modules;
 using Application;
 using Microsoft.Extensions.FileProviders;
 

@@ -17,7 +17,7 @@ public record CreateProblemDto(
             problem.Latitude,
             problem.Longitude,
             problem.Description,
-            problem.ProblemStatusId.Value,
+            problem.StatusId.Value,
             problem.Categories.Select(c => c.Id.Value).ToList()
         );
 }

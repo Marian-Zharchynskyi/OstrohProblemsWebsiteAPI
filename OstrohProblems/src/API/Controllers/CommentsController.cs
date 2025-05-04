@@ -1,12 +1,12 @@
 ﻿using API.DTOs;
-using Api.Modules.Errors;
+using API.Modules.Errors;
 using Application.Comments.Commands;
 using Application.Common.Interfaces.Queries;
 using Domain.Comments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
+namespace API.Controllers;
 
 [Route("comments")]
 [ApiController]

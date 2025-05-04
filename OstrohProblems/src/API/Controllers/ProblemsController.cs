@@ -1,13 +1,13 @@
 ﻿using API.DTOs.Problems;
-using Api.Modules.Errors;
+using API.Modules.Errors;
 using Application.Common.Interfaces.Queries;
 using Application.Problems.Commands;
 using Domain.Problems;
-using Domain.ProblemStatuses;
+using Domain.Statuses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
+namespace API.Controllers;
 
 [Route("problems")]
 [ApiController]
@@ -45,7 +45,7 @@ public class ProblemsController(
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             Description = request.Description,
-            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId),
+            StatusId = new StatusId(request.ProblemStatusId),
             ProblemCategoryIds = request.ProblemCategoryIds
         };
 
@@ -69,7 +69,7 @@ public class ProblemsController(
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             Description = request.Description,
-            ProblemStatusId = new ProblemStatusId(request.ProblemStatusId),
+            StatusId = new StatusId(request.ProblemStatusId),
             ProblemCategoryIds = request.ProblemCategoryIds 
         };
 

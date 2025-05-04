@@ -1,10 +1,10 @@
-﻿using Domain.ProblemCategories;
+﻿using Domain.Categories;
 using Optional;
 
 namespace Application.Common.Interfaces.Queries;
 
 public interface IProblemCategoryQueries
 {
-    Task<IReadOnlyList<ProblemCategory>> GetAll(CancellationToken cancellationToken);
-    Task<Option<ProblemCategory>> GetById(ProblemCategoryId id, CancellationToken cancellationToken);
+    Task<IReadOnlyList<Category>> GetAll(CancellationToken cancellationToken);
+    Task<Option<Category>> GetById(CategoryId id, CancellationToken cancellationToken);
 }

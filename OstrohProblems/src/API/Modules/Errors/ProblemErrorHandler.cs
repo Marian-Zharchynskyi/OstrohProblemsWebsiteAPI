@@ -1,8 +1,7 @@
 ﻿using Application.Problems.Exceptions;
-using Application.ProblemStatuses.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Modules.Errors;
+namespace API.Modules.Errors;
 
 public static class ProblemErrorHandler
 {

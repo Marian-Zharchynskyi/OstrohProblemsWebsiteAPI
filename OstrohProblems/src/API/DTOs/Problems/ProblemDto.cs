@@ -8,10 +8,10 @@ public record ProblemDto(
     double Latitude,
     double Longitude,
     string Description,
-    ProblemStatusDto? ProblemStatus,
+    StatusDto? ProblemStatus,
     List<CommentDto>? Comment,
     List<ProblemImageDto>? Images,
-    List<ProblemCategoryDto>? Categories,
+    List<CategoryDto>? Categories,
     DateTime CreatedAt,
     DateTime UpdatedAt)
 {
@@ -22,10 +22,10 @@ public record ProblemDto(
             problem.Latitude,
             problem.Longitude,
             problem.Description,
-            problem.ProblemStatus == null ? null : ProblemStatusDto.FromDomainModel(problem.ProblemStatus),
+            problem.ProblemStatus == null ? null : StatusDto.FromDomainModel(problem.ProblemStatus),
             problem.Comments.Count == 0 ? null : problem.Comments.Select(CommentDto.FromDomainModel).ToList(),
             problem.Images.Select(ProblemImageDto.FromDomainModel).ToList(),
-            problem.Categories.Count == 0 ? null : problem.Categories.Select(ProblemCategoryDto.FromDomainModel).ToList(),
+            problem.Categories.Count == 0 ? null : problem.Categories.Select(CategoryDto.FromDomainModel).ToList(),
             problem.CreatedAt,
             problem.UpdatedAt
         );

@@ -1,7 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 
-namespace Api.Modules;
+namespace API.Modules;
 
 public static class SetupModule
 {

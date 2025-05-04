@@ -1,7 +1,7 @@
 using API.DTOs.Problems;
 using FluentValidation;
 
-namespace Api.Modules.Validators;
+namespace API.Modules.Validators;
 
 public class ProblemDtoValidator : AbstractValidator<CreateProblemDto>
 {

@@ -2,7 +2,7 @@ using Application.Common;
 using Application.Common.Interfaces.Repositories;
 using Application.Problems.Exceptions;
 using Domain.Problems;
-using Domain.ProblemStatuses;
+using Domain.Statuses;
 using MediatR;
 
 namespace Application.Problems.Commands;
@@ -14,7 +14,7 @@ public record UpdateProblemCommand : IRequest<Result<Problem, ProblemException>>
     public required double Latitude { get; init; }
     public required double Longitude { get; init; }
     public required string Description { get; init; }
-    public required ProblemStatusId ProblemStatusId { get; init; }
+    public required StatusId StatusId { get; init; }
     public List<Guid>? ProblemCategoryIds { get; init; } 
 }
 
@@ -37,7 +37,7 @@ public class UpdateProblemCommandHandler(
                 request.Latitude,
                 request.Longitude,
                 request.Description,
-                request.ProblemStatusId,
+                request.StatusId,
                 request.ProblemCategoryIds, 
                 cancellationToken),
             () => Task.FromResult<Result<Problem, ProblemException>>(
@@ -51,13 +51,13 @@ public class UpdateProblemCommandHandler(
         double latitude,
         double longitude,
         string description,
-        ProblemStatusId problemStatusId,
+        StatusId statusId,
         List<Guid>? categoryIds,
         CancellationToken cancellationToken)
     {
         try
         {
-            problem.UpdateProblem(title, latitude, longitude, description, problemStatusId);
+            problem.UpdateProblem(title, latitude, longitude, description, statusId);
 
             if (categoryIds is not null && categoryIds.Any())
             {

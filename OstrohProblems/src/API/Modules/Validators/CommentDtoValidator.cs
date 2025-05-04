@@ -1,7 +1,7 @@
 using API.DTOs;
 using FluentValidation;
 
-namespace Api.Modules.Validators;
+namespace API.Modules.Validators;
 
 public class CommentDtoValidator : AbstractValidator<CommentDto>
 {

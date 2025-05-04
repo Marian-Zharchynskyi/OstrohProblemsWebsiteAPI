@@ -1,9 +1,9 @@
 using API.DTOs;
 using FluentValidation;
 
-namespace Api.Modules.Validators;
+namespace API.Modules.Validators;
 
-public class ProblemStatusDtoValidator : AbstractValidator<ProblemStatusDto>
+public class ProblemStatusDtoValidator : AbstractValidator<StatusDto>
 {
     public ProblemStatusDtoValidator()
     {

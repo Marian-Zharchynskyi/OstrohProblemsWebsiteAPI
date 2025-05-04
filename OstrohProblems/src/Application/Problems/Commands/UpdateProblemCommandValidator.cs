@@ -32,7 +32,7 @@ public class UpdateProblemCommandValidator : AbstractValidator<UpdateProblemComm
             .MaximumLength(2000)
             .WithMessage("Description must be between 3 and 2000 characters.");
 
-        RuleFor(x => x.ProblemStatusId)
+        RuleFor(x => x.StatusId)
             .NotNull()
             .WithMessage("Problem status is required.");
     }
