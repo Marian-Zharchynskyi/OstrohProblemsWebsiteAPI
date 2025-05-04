@@ -22,6 +22,42 @@ namespace Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("CategoryProblem", b =>
+                {
+                    b.Property<Guid>("CategoriesId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("categories_id");
+
+                    b.Property<Guid>("ProblemsId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("problems_id");
+
+                    b.HasKey("CategoriesId", "ProblemsId")
+                        .HasName("pk_fk_problem_categories");
+
+                    b.HasIndex("ProblemsId")
+                        .HasDatabaseName("ix_fk_problem_categories_problems_id");
+
+                    b.ToTable("fk_problem_categories", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Categories.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_categories");
+
+                    b.ToTable("categories", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Comments.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -49,81 +85,89 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnName("updated_at")
                         .HasDefaultValueSql("timezone('utc', now())");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_comments");
 
                     b.HasIndex("ProblemId")
                         .HasDatabaseName("ix_comments_problem_id");
 
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_comments_user_id");
+
                     b.ToTable("comments", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.ProblemCategories.ProblemCategory", b =>
+            modelBuilder.Entity("Domain.Identity.Roles.Role", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("text")
                         .HasColumnName("name");
 
                     b.HasKey("Id")
-                        .HasName("pk_problem_categories");
+                        .HasName("pk_roles");
 
-                    b.ToTable("problem_categories", (string)null);
+                    b.ToTable("roles", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.ProblemRatings.ProblemRating", b =>
+            modelBuilder.Entity("Domain.Identity.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("timezone('utc', now())");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
 
-                    b.Property<Guid>("ProblemId")
+                    b.Property<string>("FullName")
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)")
+                        .HasColumnName("full_name");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("password_hash");
+
+                    b.HasKey("Id")
+                        .HasName("pk_users");
+
+                    b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Identity.Users.UserImage", b =>
+                {
+                    b.Property<Guid>("Id")
                         .HasColumnType("uuid")
-                        .HasColumnName("problem_id");
+                        .HasColumnName("id");
 
-                    b.Property<double>("Rating")
-                        .HasColumnType("double precision")
-                        .HasColumnName("rating");
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("file_path");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_problem_ratings");
+                        .HasName("pk_user_image");
 
-                    b.HasIndex("ProblemId", "UserId")
+                    b.HasIndex("UserId")
                         .IsUnique()
-                        .HasDatabaseName("ix_problem_ratings_problem_id_user_id");
+                        .HasDatabaseName("ix_user_image_user_id");
 
-                    b.ToTable("problem_ratings", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.ProblemStatuses.ProblemStatus", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_problem_statuses");
-
-                    b.ToTable("problem_statuses", (string)null);
+                    b.ToTable("user_image", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Problems.Problem", b =>
@@ -149,9 +193,9 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("double precision")
                         .HasColumnName("longitude");
 
-                    b.Property<Guid>("ProblemStatusId")
+                    b.Property<Guid>("StatusId")
                         .HasColumnType("uuid")
-                        .HasColumnName("problem_status_id");
+                        .HasColumnName("status_id");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -162,11 +206,18 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_problems");
 
-                    b.HasIndex("ProblemStatusId")
-                        .HasDatabaseName("ix_problems_problem_status_id");
+                    b.HasIndex("StatusId")
+                        .HasDatabaseName("ix_problems_status_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_problems_user_id");
 
                     b.ToTable("problems", (string)null);
                 });
@@ -195,23 +246,146 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("problem_image", (string)null);
                 });
 
-            modelBuilder.Entity("ProblemProblemCategory", b =>
+            modelBuilder.Entity("Domain.Ratings.Rating", b =>
                 {
-                    b.Property<Guid>("CategoriesId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uuid")
-                        .HasColumnName("categories_id");
+                        .HasColumnName("id");
 
-                    b.Property<Guid>("ProblemsId")
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<double>("Points")
+                        .HasColumnType("double precision")
+                        .HasColumnName("points");
+
+                    b.Property<Guid>("ProblemId")
                         .HasColumnType("uuid")
-                        .HasColumnName("problems_id");
+                        .HasColumnName("problem_id");
 
-                    b.HasKey("CategoriesId", "ProblemsId")
-                        .HasName("pk_fk_problem_categories");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasIndex("ProblemsId")
-                        .HasDatabaseName("ix_fk_problem_categories_problems_id");
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id1");
 
-                    b.ToTable("fk_problem_categories", (string)null);
+                    b.HasKey("Id")
+                        .HasName("pk_ratings");
+
+                    b.HasIndex("UserId1")
+                        .HasDatabaseName("ix_ratings_user_id1");
+
+                    b.HasIndex("ProblemId", "UserId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_ratings_problem_id_user_id");
+
+                    b.ToTable("ratings", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.RefreshTokens.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreateDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("create_date")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<DateTime>("ExpiredDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expired_date")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_used");
+
+                    b.Property<string>("JwtId")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("jwt_id");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)")
+                        .HasColumnName("token");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_refresh_tokens");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_refresh_tokens_user_id");
+
+                    b.ToTable("refresh_tokens", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Statuses.Status", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_statuses");
+
+                    b.ToTable("statuses", (string)null);
+                });
+
+            modelBuilder.Entity("RoleUser", b =>
+                {
+                    b.Property<string>("RolesId")
+                        .HasColumnType("text")
+                        .HasColumnName("roles_id");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("users_id");
+
+                    b.HasKey("RolesId", "UsersId")
+                        .HasName("pk_user_roles");
+
+                    b.HasIndex("UsersId")
+                        .HasDatabaseName("ix_user_roles_users_id");
+
+                    b.ToTable("user_roles", (string)null);
+                });
+
+            modelBuilder.Entity("CategoryProblem", b =>
+                {
+                    b.HasOne("Domain.Categories.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_fk_problem_categories_categories_categories_id");
+
+                    b.HasOne("Domain.Problems.Problem", null)
+                        .WithMany()
+                        .HasForeignKey("ProblemsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_fk_problem_categories_problems_problems_id");
                 });
 
             modelBuilder.Entity("Domain.Comments.Comment", b =>
@@ -223,29 +397,39 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_comments_problems_problem_id");
 
+                    b.HasOne("Domain.Identity.Users.User", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("fk_comments_users_user_id");
+
                     b.Navigation("Problem");
                 });
 
-            modelBuilder.Entity("Domain.ProblemRatings.ProblemRating", b =>
+            modelBuilder.Entity("Domain.Identity.Users.UserImage", b =>
                 {
-                    b.HasOne("Domain.Problems.Problem", "Problem")
-                        .WithMany("Ratings")
-                        .HasForeignKey("ProblemId")
+                    b.HasOne("Domain.Identity.Users.User", "User")
+                        .WithOne("UserImage")
+                        .HasForeignKey("Domain.Identity.Users.UserImage", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_problem_ratings_problems_problem_id");
+                        .HasConstraintName("fk_user_images_users_id");
 
-                    b.Navigation("Problem");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Problems.Problem", b =>
                 {
-                    b.HasOne("Domain.ProblemStatuses.ProblemStatus", "ProblemStatus")
+                    b.HasOne("Domain.Statuses.Status", "ProblemStatus")
                         .WithMany("Problems")
-                        .HasForeignKey("ProblemStatusId")
+                        .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_problems_problem_statuses_problem_status_id");
+                        .HasConstraintName("fk_problems_statuses_status_id");
+
+                    b.HasOne("Domain.Identity.Users.User", null)
+                        .WithMany("Problems")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("fk_problems_users_user_id");
 
                     b.Navigation("ProblemStatus");
                 });
@@ -262,26 +446,63 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Problem");
                 });
 
-            modelBuilder.Entity("ProblemProblemCategory", b =>
+            modelBuilder.Entity("Domain.Ratings.Rating", b =>
                 {
-                    b.HasOne("Domain.ProblemCategories.ProblemCategory", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
+                    b.HasOne("Domain.Problems.Problem", "Problem")
+                        .WithMany("Ratings")
+                        .HasForeignKey("ProblemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_fk_problem_categories_problem_categories_categories_id");
+                        .HasConstraintName("fk_ratings_problems_problem_id");
 
-                    b.HasOne("Domain.Problems.Problem", null)
-                        .WithMany()
-                        .HasForeignKey("ProblemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_fk_problem_categories_problems_problems_id");
+                    b.HasOne("Domain.Identity.Users.User", null)
+                        .WithMany("Ratings")
+                        .HasForeignKey("UserId1")
+                        .HasConstraintName("fk_ratings_users_user_id1");
+
+                    b.Navigation("Problem");
                 });
 
-            modelBuilder.Entity("Domain.ProblemStatuses.ProblemStatus", b =>
+            modelBuilder.Entity("Domain.RefreshTokens.RefreshToken", b =>
                 {
+                    b.HasOne("Domain.Identity.Users.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_refresh_tokens_users_user_id");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("RoleUser", b =>
+                {
+                    b.HasOne("Domain.Identity.Roles.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_roles_roles_id");
+
+                    b.HasOne("Domain.Identity.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_users_users_id");
+                });
+
+            modelBuilder.Entity("Domain.Identity.Users.User", b =>
+                {
+                    b.Navigation("Comments");
+
                     b.Navigation("Problems");
+
+                    b.Navigation("Ratings");
+
+                    b.Navigation("RefreshTokens");
+
+                    b.Navigation("UserImage");
                 });
 
             modelBuilder.Entity("Domain.Problems.Problem", b =>
@@ -291,6 +512,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Ratings");
+                });
+
+            modelBuilder.Entity("Domain.Statuses.Status", b =>
+                {
+                    b.Navigation("Problems");
                 });
 #pragma warning restore 612, 618
         }

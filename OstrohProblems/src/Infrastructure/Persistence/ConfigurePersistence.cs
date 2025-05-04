@@ -36,8 +36,8 @@ public static class ConfigurePersistence
 
         services.AddScoped<ApplicationDbContextInitialiser>();
         services.AddRepositories();
-        // services.AddJwtTokenAuth(builder);
-        // services.AddSwaggerAuth();
+        services.AddJwtTokenAuth(builder);
+        services.AddSwaggerAuth();
     }
 
     private static void AddRepositories(this IServiceCollection services)
