@@ -7,7 +7,7 @@ using Optional;
 namespace Infrastructure.Persistence.Repositories;
 
 public class CategoryRepository(ApplicationDbContext context)
-    : IProblemCategoryRepository, IProblemCategoryQueries
+    : ICategoryRepository, ICategoryQueries
 {
     public async Task<IReadOnlyList<Category>> GetAll(CancellationToken cancellationToken)
     {

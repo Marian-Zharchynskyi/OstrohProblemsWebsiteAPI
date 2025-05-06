@@ -22,7 +22,7 @@ public class HashPasswordService : IHashPasswordService
 
         return $"{Convert.ToBase64String(salt)}:{hashedPassword}";
     }
-
+    
     public bool VerifyPassword(string password, string storedHash)
     {
         var parts = storedHash.Split(':');

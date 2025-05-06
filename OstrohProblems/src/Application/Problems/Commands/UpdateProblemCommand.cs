@@ -20,7 +20,7 @@ public record UpdateProblemCommand : IRequest<Result<Problem, ProblemException>>
 
 public class UpdateProblemCommandHandler(
     IProblemRepository problemRepository,
-    IProblemCategoryRepository categoryRepository) 
+    ICategoryRepository categoryRepository) 
     : IRequestHandler<UpdateProblemCommand, Result<Problem, ProblemException>>
 {
     public async Task<Result<Problem, ProblemException>> Handle(

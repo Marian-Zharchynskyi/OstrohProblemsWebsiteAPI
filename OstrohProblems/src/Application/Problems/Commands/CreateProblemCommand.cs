@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.Common.Interfaces.Repositories;
 using Application.Problems.Exceptions;
+using Domain.Identity.Users;
 using Domain.Problems;
 using Domain.Statuses;
 using MediatR;
@@ -19,7 +20,7 @@ public record CreateProblemCommand : IRequest<Result<Problem, ProblemException>>
 
 public class CreateProblemCommandHandler(
     IProblemRepository problemRepository,
-    IProblemCategoryRepository categoryRepository)
+    ICategoryRepository categoryRepository)
     : IRequestHandler<CreateProblemCommand, Result<Problem, ProblemException>>
 {
     public async Task<Result<Problem, ProblemException>> Handle(
@@ -51,13 +52,16 @@ public class CreateProblemCommandHandler(
     {
         try
         {
+            //TODO: add user id
             var problem = Problem.New(
                 ProblemId.New(),
                 title,
                 latitude,
                 longitude,
                 description,
-                statusId);
+                statusId,
+                UserId.Empty
+                );
 
             if (categoryIds.Any())
             {

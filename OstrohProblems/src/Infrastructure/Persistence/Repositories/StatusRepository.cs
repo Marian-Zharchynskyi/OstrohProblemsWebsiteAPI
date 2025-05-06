@@ -6,7 +6,7 @@ using Optional;
 
 namespace Infrastructure.Persistence.Repositories;
 
-public class StatusRepository : IProblemStatusQueries , IProblemStatusRepository
+public class StatusRepository : IStatusQueries , IStatusRepository
 {
     private readonly ApplicationDbContext _context;
 

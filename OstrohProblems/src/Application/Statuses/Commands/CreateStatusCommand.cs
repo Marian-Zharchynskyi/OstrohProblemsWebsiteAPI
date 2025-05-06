@@ -12,14 +12,14 @@ public record CreateStatusCommand : IRequest<Result<Status, StatusException>>
 }
 
 public class CreateProblemStatusCommandHandler(
-    IProblemStatusRepository problemStatusRepository)
+    IStatusRepository statusRepository)
     : IRequestHandler<CreateStatusCommand, Result<Status, StatusException>>
 {
     public async Task<Result<Status, StatusException>> Handle(
         CreateStatusCommand request,
         CancellationToken cancellationToken)
     {
-        var existingProblemStatus = await problemStatusRepository.
+        var existingProblemStatus = await statusRepository.
             SearchByName(request.Name, cancellationToken);
 
         return await existingProblemStatus.Match(
@@ -36,7 +36,7 @@ public class CreateProblemStatusCommandHandler(
         {
             var entity = Status.New(StatusId.New(), name);
 
-            return await problemStatusRepository.Add(entity, cancellationToken);
+            return await statusRepository.Add(entity, cancellationToken);
         }
         catch (Exception exception)
         {

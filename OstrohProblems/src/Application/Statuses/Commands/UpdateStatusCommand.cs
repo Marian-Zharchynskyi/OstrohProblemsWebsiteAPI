@@ -13,7 +13,7 @@ public record UpdateStatusCommand : IRequest<Result<Status, StatusException>>
 }
 
 public class UpdateProblemStatusCommandHandler(
-    IProblemStatusRepository problemStatusRepository)
+    IStatusRepository statusRepository)
     : IRequestHandler<UpdateStatusCommand, Result<Status, StatusException>>
 {
     public async Task<Result<Status, StatusException>> Handle(
@@ -21,7 +21,7 @@ public class UpdateProblemStatusCommandHandler(
         CancellationToken cancellationToken)
     {
         var problemStatusId = new StatusId(request.ProblemStatusId);
-        var existingProblemStatus = await problemStatusRepository.GetById(problemStatusId, cancellationToken);
+        var existingProblemStatus = await statusRepository.GetById(problemStatusId, cancellationToken);
 
         return await existingProblemStatus.Match<Task<Result<Status, StatusException>>>(
             async problemStatus => await UpdateProblemStatus(problemStatus, request.Name, cancellationToken),
@@ -38,7 +38,7 @@ public class UpdateProblemStatusCommandHandler(
         try
         {
             status.UpdateName(name);
-            return await problemStatusRepository.Update(status, cancellationToken);
+            return await statusRepository.Update(status, cancellationToken);
         }
         catch (Exception exception)
         {

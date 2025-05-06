@@ -43,23 +43,24 @@ public static class ConfigurePersistence
     private static void AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<StatusRepository>();
-        services.AddScoped<IProblemStatusRepository>(provider =>
-            provider.GetRequiredService<StatusRepository>());
-        services.AddScoped<IProblemStatusQueries>(provider => provider.GetRequiredService<StatusRepository>());
+        services.AddScoped<IStatusRepository>(provider => provider.GetRequiredService<StatusRepository>());
+        services.AddScoped<IStatusQueries>(provider => provider.GetRequiredService<StatusRepository>());
 
         services.AddScoped<ProblemRepository>();
         services.AddScoped<IProblemRepository>(provider => provider.GetRequiredService<ProblemRepository>());
         services.AddScoped<IProblemQueries>(provider => provider.GetRequiredService<ProblemRepository>());
 
         services.AddScoped<CategoryRepository>();
-        services.AddScoped<IProblemCategoryRepository>(provider =>
-            provider.GetRequiredService<CategoryRepository>());
-        services.AddScoped<IProblemCategoryQueries>(
-            provider => provider.GetRequiredService<CategoryRepository>());
+        services.AddScoped<ICategoryRepository>(provider => provider.GetRequiredService<CategoryRepository>());
+        services.AddScoped<ICategoryQueries>(provider => provider.GetRequiredService<CategoryRepository>());
 
         services.AddScoped<CommentRepository>();
         services.AddScoped<ICommentRepository>(provider => provider.GetRequiredService<CommentRepository>());
         services.AddScoped<ICommentQueries>(provider => provider.GetRequiredService<CommentRepository>());
+        
+        services.AddScoped<UserRepository>();
+        services.AddScoped<IUserRepository>(provider => provider.GetRequiredService<UserRepository>());
+        services.AddScoped<IUserQueries>(provider => provider.GetRequiredService<UserRepository>());
         
         services.AddScoped<RoleRepository>();
         services.AddScoped<IRoleQueries>(provider => provider.GetRequiredService<RoleRepository>());

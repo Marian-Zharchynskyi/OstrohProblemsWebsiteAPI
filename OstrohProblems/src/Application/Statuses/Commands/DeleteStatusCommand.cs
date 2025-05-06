@@ -14,7 +14,7 @@ public record DeleteStatusCommand : IRequest<Result<Status, StatusException>>
 }
 
 public class DeleteProblemStatusCommandHandler(
-    IProblemStatusRepository problemStatusRepository)
+    IStatusRepository statusRepository)
     : IRequestHandler<DeleteStatusCommand, Result<Status, StatusException>>
 {
     public async Task<Result<Status, StatusException>> Handle(
@@ -22,7 +22,7 @@ public class DeleteProblemStatusCommandHandler(
         CancellationToken cancellationToken)
     {
         var problemStatusId = new StatusId(request.ProblemStatusId);
-        var existingProblemStatus = await problemStatusRepository.GetById(problemStatusId, cancellationToken);
+        var existingProblemStatus = await statusRepository.GetById(problemStatusId, cancellationToken);
 
         return await existingProblemStatus.Match<Task<Result<Status, StatusException>>>(
             async problemStatus => await DeleteEntity(problemStatus, cancellationToken),
@@ -36,7 +36,7 @@ public class DeleteProblemStatusCommandHandler(
     {
         try
         {
-            return await problemStatusRepository.Delete(status, cancellationToken);
+            return await statusRepository.Delete(status, cancellationToken);
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23503")
         {

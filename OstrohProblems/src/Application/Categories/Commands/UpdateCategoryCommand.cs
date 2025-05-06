@@ -13,7 +13,7 @@ public record UpdateCategoryCommand : IRequest<Result<Category, CategoryExceptio
 }
 
 public class UpdateProblemCategoryCommandHandler(
-    IProblemCategoryRepository problemCategoryRepository)
+    ICategoryRepository categoryRepository)
     : IRequestHandler<UpdateCategoryCommand, Result<Category, CategoryException>>
 {
     public async Task<Result<Category, CategoryException>> Handle(
@@ -21,7 +21,7 @@ public class UpdateProblemCategoryCommandHandler(
         CancellationToken cancellationToken)
     {
         var problemCategoryId = new CategoryId(request.ProblemCategoryId);
-        var existingProblemCategory = await problemCategoryRepository.GetById(problemCategoryId, cancellationToken);
+        var existingProblemCategory = await categoryRepository.GetById(problemCategoryId, cancellationToken);
 
         return await existingProblemCategory.Match<Task<Result<Category, CategoryException>>>(
             async problemCategory => await UpdateProblemCategory(problemCategory, request.Name, cancellationToken),
@@ -38,7 +38,7 @@ public class UpdateProblemCategoryCommandHandler(
         try
         {
             category.UpdateName(name);
-            return await problemCategoryRepository.Update(category, cancellationToken);
+            return await categoryRepository.Update(category, cancellationToken);
         }
         catch (Exception exception)
         {

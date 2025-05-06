@@ -12,13 +12,13 @@ namespace API.Controllers;
 [ApiController]
 public class CategoriesController(
     ISender sender,
-    IProblemCategoryQueries problemCategoryQueries)
+    ICategoryQueries categoryQueries)
     : ControllerBase
 {
     [HttpGet("get-all")]
     public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetAll(CancellationToken cancellationToken)
     {
-        var entities = await problemCategoryQueries.GetAll(cancellationToken);
+        var entities = await categoryQueries.GetAll(cancellationToken);
         return entities.Select(CategoryDto.FromDomainModel).ToList();
     }
 
@@ -26,7 +26,7 @@ public class CategoriesController(
     public async Task<ActionResult<CategoryDto>> Get([FromRoute] Guid problemCategoryId,
         CancellationToken cancellationToken)
     {
-        var entity = await problemCategoryQueries.GetById(new CategoryId(problemCategoryId), cancellationToken);
+        var entity = await categoryQueries.GetById(new CategoryId(problemCategoryId), cancellationToken);
 
         return entity.Match<ActionResult<CategoryDto>>(
             pc => CategoryDto.FromDomainModel(pc),

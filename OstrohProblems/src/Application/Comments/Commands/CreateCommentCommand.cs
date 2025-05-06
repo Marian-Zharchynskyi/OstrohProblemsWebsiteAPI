@@ -2,6 +2,7 @@
 using Application.Common;
 using Application.Common.Interfaces.Repositories;
 using Domain.Comments;
+using Domain.Identity.Users;
 using Domain.Problems;
 using MediatR;
 
@@ -31,7 +32,8 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
 
         try
         {
-            var comment = Comment.New(commentId, request.Content, problemId);
+            //TODO: add user id
+            var comment = Comment.New(commentId, request.Content, problemId, UserId.Empty);
             return await _commentRepository.Add(comment, cancellationToken);
         }
         catch (Exception exception)

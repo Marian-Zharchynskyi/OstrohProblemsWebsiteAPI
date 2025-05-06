@@ -15,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddInfrastructure(builder);
 builder.Services.AddApplication();
 builder.Services.SetupServices();
+builder.Services.AddHttpContextAccessor();
     
 var app = builder.Build();
 

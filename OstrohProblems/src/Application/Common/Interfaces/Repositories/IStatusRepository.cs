@@ -3,7 +3,7 @@ using Optional;
 
 namespace Application.Common.Interfaces.Repositories;
 
-public interface IProblemStatusRepository
+public interface IStatusRepository
 {
     Task<Option<Status>> GetById(StatusId id, CancellationToken cancellationToken);
     Task<Option<Status>> SearchByName(string name, CancellationToken cancellationToken);

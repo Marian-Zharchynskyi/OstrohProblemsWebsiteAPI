@@ -12,13 +12,13 @@ namespace API.Controllers;
 [ApiController]
 public class StatusesController(
     ISender sender,
-    IProblemStatusQueries problemStatusQueries) 
+    IStatusQueries statusQueries) 
     : ControllerBase
 {
     [HttpGet("get-all")]
     public async Task<ActionResult<IReadOnlyList<StatusDto>>> GetAll(CancellationToken cancellationToken)
     {
-        var entities = await problemStatusQueries.GetAll(cancellationToken);
+        var entities = await statusQueries.GetAll(cancellationToken);
         return entities.Select(StatusDto.FromDomainModel).ToList();
     }
 
@@ -26,7 +26,7 @@ public class StatusesController(
     public async Task<ActionResult<StatusDto>> Get([FromRoute] Guid problemStatusId,
         CancellationToken cancellationToken)
     {
-        var entity = await problemStatusQueries.GetById(new StatusId(problemStatusId), cancellationToken);
+        var entity = await statusQueries.GetById(new StatusId(problemStatusId), cancellationToken);
 
         return entity.Match<ActionResult<StatusDto>>(
             ps => StatusDto.FromDomainModel(ps),

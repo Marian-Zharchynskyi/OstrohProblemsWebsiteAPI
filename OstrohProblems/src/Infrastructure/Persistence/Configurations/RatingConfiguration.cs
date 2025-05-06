@@ -31,7 +31,5 @@ public class RatingConfiguration : IEntityTypeConfiguration<Rating>
             .WithMany(p => p.Ratings) 
             .HasForeignKey(r => r.ProblemId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasIndex(r => new { r.ProblemId, r.UserId }).IsUnique();
     }
 }

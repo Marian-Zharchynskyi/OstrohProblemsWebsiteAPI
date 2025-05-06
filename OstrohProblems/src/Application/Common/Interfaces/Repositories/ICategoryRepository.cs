@@ -3,7 +3,7 @@ using Optional;
 
 namespace Application.Common.Interfaces.Repositories;
 
-public interface IProblemCategoryRepository
+public interface ICategoryRepository
 {
     Task<Option<Category>> GetById(CategoryId id, CancellationToken cancellationToken);
     Task<Option<Category>> SearchByName(string name, CancellationToken cancellationToken);

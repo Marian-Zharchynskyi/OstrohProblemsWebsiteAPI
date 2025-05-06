@@ -14,7 +14,7 @@ public record DeleteCategoryCommand : IRequest<Result<Category, CategoryExceptio
 }
 
 public class DeleteProblemCategoryCommandHandler(
-    IProblemCategoryRepository problemCategoryRepository)
+    ICategoryRepository categoryRepository)
     : IRequestHandler<DeleteCategoryCommand, Result<Category, CategoryException>>
 {
     public async Task<Result<Category, CategoryException>> Handle(
@@ -22,7 +22,7 @@ public class DeleteProblemCategoryCommandHandler(
         CancellationToken cancellationToken)
     {
         var problemCategoryId = new CategoryId(request.ProblemCategoryId);
-        var existingProblemCategory = await problemCategoryRepository.GetById(problemCategoryId, cancellationToken);
+        var existingProblemCategory = await categoryRepository.GetById(problemCategoryId, cancellationToken);
 
         return await existingProblemCategory.Match<Task<Result<Category, CategoryException>>>(
             async problemCategory => await DeleteEntity(problemCategory, cancellationToken),
@@ -36,7 +36,7 @@ public class DeleteProblemCategoryCommandHandler(
     {
         try
         {
-            return await problemCategoryRepository.Delete(category, cancellationToken);
+            return await categoryRepository.Delete(category, cancellationToken);
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23503")
         {

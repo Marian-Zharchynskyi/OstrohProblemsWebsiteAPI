@@ -12,14 +12,14 @@ public record CreateCategoryCommand : IRequest<Result<Category, CategoryExceptio
 }
 
 public class CreateProblemCategoryCommandHandler(
-    IProblemCategoryRepository problemCategoryRepository)
+    ICategoryRepository categoryRepository)
     : IRequestHandler<CreateCategoryCommand, Result<Category, CategoryException>>
 {
     public async Task<Result<Category, CategoryException>> Handle(
         CreateCategoryCommand request,
         CancellationToken cancellationToken)
     {
-        var existingProblemCategory = await problemCategoryRepository.SearchByName(request.Name, cancellationToken);
+        var existingProblemCategory = await categoryRepository.SearchByName(request.Name, cancellationToken);
 
         return await existingProblemCategory.Match(
             c => Task.FromResult<Result<Category, CategoryException>>(
@@ -35,7 +35,7 @@ public class CreateProblemCategoryCommandHandler(
         {
             var entity = Category.New(CategoryId.New(), name);
 
-            return await problemCategoryRepository.Add(entity, cancellationToken);
+            return await categoryRepository.Add(entity, cancellationToken);
         }
         catch (Exception exception)
         {
